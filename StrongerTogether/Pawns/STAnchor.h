@@ -41,6 +41,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	TSubclassOf<class ASTPartyCharacter> CharactersClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
+	TArray<TSubclassOf<class ASTPartyCharacter>> CharactersClasses;
 
 	bool bIsMoving = false;
 

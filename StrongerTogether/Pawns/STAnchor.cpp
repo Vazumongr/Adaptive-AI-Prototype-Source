@@ -37,9 +37,9 @@ void ASTAnchor::Tick(float DeltaSeconds)
 void ASTAnchor::SpawnPartyCharacter()
 {
 	FActorSpawnParameters SpawnParameters;
-	for(int i = 0; i < 4; i++)
+	for(TSubclassOf<ASTPartyCharacter> Class : CharactersClasses)
 	{
-		if(ASTPartyCharacter* PartyMember = GetWorld()->SpawnActor<ASTPartyCharacter>(CharactersClass, GetActorLocation(), GetActorRotation(), SpawnParameters))
+		if(ASTPartyCharacter* PartyMember = GetWorld()->SpawnActor<ASTPartyCharacter>(Class, GetActorLocation(), GetActorRotation(), SpawnParameters))
 		{
 			AddPartyCharacter(PartyMember);
 			PartyMember->SetOwningAnchor(this);

@@ -3,6 +3,8 @@
 
 #include "STPartyCharacter.h"
 
+
+#include "StrongerTogether/Abilities/STAbilitySystemComponent.h"
 #include "StrongerTogether/Pawns/STAnchor.h"
 #include "StrongerTogether/Abilities/STGameplayAbility.h"
 
@@ -11,6 +13,14 @@ ASTPartyCharacter::ASTPartyCharacter()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	AbilitySystemComponent = CreateDefaultSubobject<USTAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+
+	AttributeSet = CreateDefaultSubobject<USTAttributeSet>(TEXT("AttributeSet"));
+
+	CharacterLevel = 1;
+	bAbilitiesInitialized = false;
 
 	FGuid MyID = FGuid::NewGuid();
 	Name = MyID.ToString();
@@ -23,6 +33,7 @@ void ASTPartyCharacter::PossessedBy(AController* NewController)
 	if (AbilitySystemComponent)
 	{
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+		AddStartupGameplayAbilities();
 	}
 }
 
@@ -61,12 +72,32 @@ void ASTPartyCharacter::AddStartupGameplayAbilities()
 	{
 		for(TSubclassOf<USTGameplayAbility>& InitialAbility : InitialAbilities)
 		{
-			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(InitialAbility, GetCharacterLevel(), INDEX_NONE, this));
+			FGameplayAbilitySpecHandle TempHandle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(InitialAbility, GetCharacterLevel(), INDEX_NONE, this));
+			AbilitySpecHandles.Add(TempHandle);
+		}
+		
+
+		FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(InitialStats, 1, EffectContext);
+		if (NewHandle.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Handle valid"));
+			FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*NewHandle.Data.Get());
 		}
 	}
 
 	bAbilitiesInitialized = true;
 	
+}
+
+void ASTPartyCharacter::ActivateAbilityByIndex(int32 Index)
+{
+	if(AbilitySystemComponent)
+	{
+		AbilitySystemComponent->TryActivateAbility(AbilitySpecHandles[Index]);
+	}
 }
 
 float ASTPartyCharacter::GetHealth() const

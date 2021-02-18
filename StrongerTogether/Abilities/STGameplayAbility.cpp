@@ -1,12 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "StrongerTogether/Abilities/STGameplayAbility.h"
-#include "AbilitySystemComponent.h"
-#include "StrongerTogether/Abilities/STTargetType.h"
-#include "StrongerTogether/Characters/STPartyCharacter.h"
 
 USTGameplayAbility::USTGameplayAbility() {}
 
+/* I DONT KNOW WHAT ANY OF THIS DOES
 FSTGameplayEffectContainerSpec USTGameplayAbility::MakeEffectContainerSpecFromContainer(const FSTGameplayEffectContainer& Container, const FGameplayEventData& EventData, int32 OverrideGameplayLevel)
 {
 	// First figure out our actor info
@@ -14,7 +12,7 @@ FSTGameplayEffectContainerSpec USTGameplayAbility::MakeEffectContainerSpecFromCo
 	AActor* OwningActor = GetOwningActorFromActorInfo();
 	ASTPartyCharacter* OwningCharacter = Cast<ASTPartyCharacter>(OwningActor);
 	//UAbilitySystemComponent* OwningASC = USTAbilitySystemComponent::GetAbilitySystemComponentFromActor(OwningActor);
-	/*
+	
 	if (OwningASC)
 	{
 		// If we have a target type, run the targeting logic. This is optional, targets can be added later
@@ -40,7 +38,7 @@ FSTGameplayEffectContainerSpec USTGameplayAbility::MakeEffectContainerSpecFromCo
 			ReturnSpec.TargetGameplayEffectSpecs.Add(MakeOutgoingGameplayEffectSpec(EffectClass, OverrideGameplayLevel));
 		}
 	}
-	*/
+	
 	return ReturnSpec;
 }
 
@@ -72,3 +70,4 @@ TArray<FActiveGameplayEffectHandle> USTGameplayAbility::ApplyEffectContainer(FGa
 	FSTGameplayEffectContainerSpec Spec = MakeEffectContainerSpec(ContainerTag, EventData, OverrideGameplayLevel);
 	return ApplyEffectContainerSpec(Spec);
 }
+*/

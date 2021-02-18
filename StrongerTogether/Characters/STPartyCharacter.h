@@ -18,6 +18,8 @@ class STRONGERTOGETHER_API ASTPartyCharacter : public APawn, public IAbilitySyst
 public:
 	// Sets default values for this pawn's properties
 	ASTPartyCharacter();
+
+
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_Controller() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -25,9 +27,10 @@ public:
 	// Implement IAbilitySystemInterface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 
-	void SetOwningAnchor(class ASTAnchor* InAnchor);
-
 	void AddStartupGameplayAbilities();
+	
+	UFUNCTION(BlueprintCallable)
+	void ActivateAbilityByIndex(int32 Index);
 	
 	/** The component used to handle ability system interactions */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
@@ -37,11 +40,34 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
 	USTAttributeSet* AttributeSet;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void StartMoving();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HealthValue;
+
+	bool bAbilitiesInitialized = false;
+
+	UPROPERTY(EditAnywhere, Replicated, Category = "Abilities")
+	int32 CharacterLevel;
+
+	// Used for setting initial abilities
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
+	TArray<TSubclassOf<class USTGameplayAbility>> InitialAbilities;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
+	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
+	
+	// Used for setting default character stats
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
+	TSubclassOf<class UGameplayEffect> InitialStats;
+	
+#pragma region NonGAS
+	
+	void SetOwningAnchor(class ASTAnchor* InAnchor);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void StopMoving();
+    void StartMoving();
+
+	UFUNCTION(BlueprintImplementableEvent)
+    void StopMoving();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Name;
@@ -51,12 +77,10 @@ public:
 	FString AbilityTwo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString AbilityThree;
-
-	bool bAbilitiesInitialized = false;
-
-	UPROPERTY(EditAnywhere, Replicated, Category = "Abilities")
-	int32 CharacterLevel;
-
+	
+#pragma endregion 
+#pragma region GETTERSSETTERS =
+	
 	/** Returns current health, will be 0 if dead */
 	UFUNCTION(BlueprintCallable)
     virtual float GetHealth() const;
@@ -80,8 +104,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual int32 GetCharacterLevel() const { return CharacterLevel; }
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
-	TArray<TSubclassOf<class USTGameplayAbility>> InitialAbilities;
+#pragma endregion 
+
 	
 
 protected:

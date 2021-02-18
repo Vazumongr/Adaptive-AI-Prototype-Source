@@ -62,8 +62,10 @@ void USTAttributeSet::OnRep_DefensePower(const FGameplayAttributeData& OldValue)
 	GAMEPLAYATTRIBUTE_REPNOTIFY(USTAttributeSet, DefensePower, OldValue);
 }
 
-#pragma endregion 
+#pragma endregion
 
+
+/* //dont need
 void USTAttributeSet::AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty)
 {
 	UAbilitySystemComponent* AbilityComp = GetOwningAbilitySystemComponent();
@@ -93,3 +95,4 @@ void USTAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, fl
 	}
 }
 
+*/
