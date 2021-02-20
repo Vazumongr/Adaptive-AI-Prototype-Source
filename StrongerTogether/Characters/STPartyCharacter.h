@@ -50,6 +50,10 @@ public:
 
 	// Used for setting initial abilities
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
+	TArray<class USTAbilityDataAsset*> InitialAbilitiesDAs;
+
+	// Used for setting initial abilities
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
 	TArray<TSubclassOf<class USTGameplayAbility>> InitialAbilities;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")

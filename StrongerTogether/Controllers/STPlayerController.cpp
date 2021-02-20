@@ -3,6 +3,7 @@
 
 #include "STPlayerController.h"
 
+
 #include "Blueprint/UserWidget.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -22,6 +23,7 @@ void ASTPlayerController::BeginPlay()
     CharacterHUD = CreateWidget<UUserWidget>(this, CharacterHUDClass);
     CharacterHUD->AddToViewport();
     bShowMouseCursor = true;
+    PlayersCombatState = ECombatState::NoCharSelected;
 }
 
 void ASTPlayerController::AdvanceCharacters()
@@ -64,9 +66,23 @@ void ASTPlayerController::SelectCharacter()
     if(bHit)
     {
         SelectedActor = HitResult.GetActor();
-        if(CharacterHUD != nullptr)
+        if(SelectedActor)
         {
-            UpdateCharacterHUD();
+            PlayersCombatState = ECombatState::CharacterSelected;
+            if(CharacterHUD != nullptr)
+            {
+                UpdateCharacterHUD();
+                TargetData.Clear();
+                FGameplayAbilityTargetData_ActorArray* NewData = new FGameplayAbilityTargetData_ActorArray();
+                NewData->TargetActorArray.Add(SelectedActor);
+                TargetData.Add(NewData);
+            }
         }
+
+    }
+    else
+    {
+        PlayersCombatState = ECombatState::NoCharSelected;
+        SelectedActor = nullptr;
     }
 }

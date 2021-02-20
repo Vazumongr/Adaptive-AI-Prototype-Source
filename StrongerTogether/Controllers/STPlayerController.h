@@ -4,7 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Abilities/GameplayAbilityTargetTypes.h"
+
 #include "STPlayerController.generated.h"
+
+UENUM(BlueprintType)
+enum class ECombatState : uint8
+{
+	EnemiesTurn,
+	NoCharSelected,
+	CharacterSelected,
+	AbilityPrimed
+};
 
 UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCharacterSelect);
@@ -41,6 +52,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	TSubclassOf<class UUserWidget> CharacterHUDClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GameplayEffectContainer)
+    FGameplayAbilityTargetDataHandle TargetData;
+
 	uint8 Counter = 0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
+	ECombatState PlayersCombatState;
 	
 };

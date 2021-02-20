@@ -7,6 +7,7 @@
 #include "StrongerTogether/Abilities/STAbilitySystemComponent.h"
 #include "StrongerTogether/Pawns/STAnchor.h"
 #include "StrongerTogether/Abilities/STGameplayAbility.h"
+#include "StrongerTogether/DataAssets/STAbilityDataAsset.h"
 
 // Sets default values
 ASTPartyCharacter::ASTPartyCharacter()
@@ -70,9 +71,18 @@ void ASTPartyCharacter::AddStartupGameplayAbilities()
 
 	if(!bAbilitiesInitialized)
 	{
+		/*
 		for(TSubclassOf<USTGameplayAbility>& InitialAbility : InitialAbilities)
 		{
 			FGameplayAbilitySpecHandle TempHandle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(InitialAbility, GetCharacterLevel(), INDEX_NONE, this));
+			AbilitySpecHandles.Add(TempHandle);
+		}
+		*/
+		for(USTAbilityDataAsset* DataAsset : InitialAbilitiesDAs)
+		{
+			if(DataAsset == nullptr) return;
+			TSubclassOf<USTGameplayAbility>& Ability = DataAsset->GameplayAbilityClass;
+			FGameplayAbilitySpecHandle TempHandle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, GetCharacterLevel(), INDEX_NONE, this));
 			AbilitySpecHandles.Add(TempHandle);
 		}
 		
@@ -96,7 +106,12 @@ void ASTPartyCharacter::ActivateAbilityByIndex(int32 Index)
 {
 	if(AbilitySystemComponent)
 	{
-		AbilitySystemComponent->TryActivateAbility(AbilitySpecHandles[Index]);
+		UE_LOG(LogTemp, Warning, TEXT("%f"), AbilitySpecHandles.Num());
+		if(Index < AbilitySpecHandles.Num() - 1)
+		{
+			AbilitySystemComponent->TryActivateAbility(AbilitySpecHandles[Index]);
+		}
+		
 	}
 }
 
