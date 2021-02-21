@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"		
 #include "GameFramework/Pawn.h"
 #include "StrongerTogether/Abilities/STAttributeSet.h"
+#include "Abilities/GameplayAbilityTargetTypes.h"
 
 #include "STPartyCharacter.generated.h"
 
@@ -31,10 +32,15 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ActivateAbilityByIndex(int32 Index);
+
+	void SetTarget(AActor* TargetActor);
 	
 	/** The component used to handle ability system interactions */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
 	UAbilitySystemComponent* AbilitySystemComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GameplayEffectContainer)
+	FGameplayAbilityTargetDataHandle TargetData;
 	
 	/** List of attributes modified by the ability system */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")

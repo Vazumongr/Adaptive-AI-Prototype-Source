@@ -20,6 +20,7 @@ enum class ECombatState : uint8
 UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCharacterSelect);
 
+
 /**
  * 
  */
@@ -31,6 +32,10 @@ class STRONGERTOGETHER_API ASTPlayerController : public APlayerController
 	virtual void SetupInputComponent() override;
 
 	virtual void BeginPlay() override;
+	
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetAbilityIndex(int32 Index);
 	
 	
 protected:
@@ -44,18 +49,17 @@ protected:
 	void SelectCharacter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
-	AActor* SelectedActor;
+	class ASTPartyCharacter* SelectedActor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
-	class UUserWidget* CharacterHUD;
+	class USTCharacterHUD* CharacterHUD;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	TSubclassOf<class UUserWidget> CharacterHUDClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GameplayEffectContainer)
-    FGameplayAbilityTargetDataHandle TargetData;
-
 	uint8 Counter = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
+	int32 AbilityIndex;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
 	ECombatState PlayersCombatState;

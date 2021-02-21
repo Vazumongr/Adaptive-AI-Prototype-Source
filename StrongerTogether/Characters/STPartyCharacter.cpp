@@ -71,19 +71,21 @@ void ASTPartyCharacter::AddStartupGameplayAbilities()
 
 	if(!bAbilitiesInitialized)
 	{
-		/*
-		for(TSubclassOf<USTGameplayAbility>& InitialAbility : InitialAbilities)
-		{
-			FGameplayAbilitySpecHandle TempHandle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(InitialAbility, GetCharacterLevel(), INDEX_NONE, this));
-			AbilitySpecHandles.Add(TempHandle);
-		}
-		*/
+		int32 Counter = 1;
 		for(USTAbilityDataAsset* DataAsset : InitialAbilitiesDAs)
 		{
 			if(DataAsset == nullptr) return;
 			TSubclassOf<USTGameplayAbility>& Ability = DataAsset->GameplayAbilityClass;
 			FGameplayAbilitySpecHandle TempHandle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, GetCharacterLevel(), INDEX_NONE, this));
 			AbilitySpecHandles.Add(TempHandle);
+			if(Counter == 1)
+				AbilityOne = DataAsset->AbilityName;
+			else if(Counter == 2)
+				AbilityTwo = DataAsset->AbilityName;
+			else if(Counter == 3)
+				AbilityThree = DataAsset->AbilityName;
+
+			Counter++;
 		}
 		
 
@@ -107,12 +109,20 @@ void ASTPartyCharacter::ActivateAbilityByIndex(int32 Index)
 	if(AbilitySystemComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%f"), AbilitySpecHandles.Num());
-		if(Index < AbilitySpecHandles.Num() - 1)
+		if(Index < AbilitySpecHandles.Num() && Index > -1)
 		{
 			AbilitySystemComponent->TryActivateAbility(AbilitySpecHandles[Index]);
 		}
 		
 	}
+}
+
+void ASTPartyCharacter::SetTarget(AActor* TargetActor)
+{
+	TargetData.Clear();
+	FGameplayAbilityTargetData_ActorArray* NewData = new FGameplayAbilityTargetData_ActorArray();
+	NewData->TargetActorArray.Add(TargetActor);
+	TargetData.Add(NewData);
 }
 
 float ASTPartyCharacter::GetHealth() const

@@ -10,6 +10,8 @@
 
 #include "StrongerTogether/GameModes/STMainGameMode.h"
 #include "StrongerTogether/Pawns/STAnchor.h"
+#include "StrongerTogether/Characters//STPartyCharacter.h"
+#include "StrongerTogether/Widgets/STCharacterHUD.h"
 
 void ASTPlayerController::SetupInputComponent()
 {
@@ -20,10 +22,16 @@ void ASTPlayerController::SetupInputComponent()
 
 void ASTPlayerController::BeginPlay()
 {
-    CharacterHUD = CreateWidget<UUserWidget>(this, CharacterHUDClass);
+    CharacterHUD = CreateWidget<USTCharacterHUD>(this, CharacterHUDClass);
     CharacterHUD->AddToViewport();
+    CharacterHUD->OwningController = this;
     bShowMouseCursor = true;
     PlayersCombatState = ECombatState::NoCharSelected;
+}
+
+void ASTPlayerController::SetAbilityIndex(int32 Index)
+{
+    AbilityIndex = Index;
 }
 
 void ASTPlayerController::AdvanceCharacters()
@@ -47,7 +55,6 @@ void ASTPlayerController::AdvanceCharacters()
 
 void ASTPlayerController::SelectCharacter()
 {
-    
     FVector WorldLocation, WorldDirection;
     DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
 
@@ -55,7 +62,6 @@ void ASTPlayerController::SelectCharacter()
     FVector EndLocation = (StartLocation + (WorldDirection * 1000));
     
     TArray<AActor*> ActorsToIgnore;
-    //ActorsToIgnore.Add(GetPawn());
 
     FHitResult HitResult;
 
@@ -65,17 +71,50 @@ void ASTPlayerController::SelectCharacter()
     UE_LOG(LogTemp, Warning, TEXT("%s"), bHit ? TEXT("true") : TEXT("false"));
     if(bHit)
     {
-        SelectedActor = HitResult.GetActor();
-        if(SelectedActor)
+        if(PlayersCombatState == ECombatState::EnemiesTurn) return;
+        
+        if(PlayersCombatState == ECombatState::NoCharSelected)
         {
-            PlayersCombatState = ECombatState::CharacterSelected;
-            if(CharacterHUD != nullptr)
+            if(ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor()))
             {
-                UpdateCharacterHUD();
-                TargetData.Clear();
-                FGameplayAbilityTargetData_ActorArray* NewData = new FGameplayAbilityTargetData_ActorArray();
-                NewData->TargetActorArray.Add(SelectedActor);
-                TargetData.Add(NewData);
+                SelectedActor = PartyCharacter;
+                PlayersCombatState = ECombatState::CharacterSelected;
+                if(CharacterHUD != nullptr)
+                {
+                    UpdateCharacterHUD();
+                }
+            }
+        }
+        else if(PlayersCombatState == ECombatState::CharacterSelected)
+        {
+            if(ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor()))
+            {
+                if(SelectedActor == PartyCharacter)
+                    PlayersCombatState = ECombatState::AbilityPrimed;
+                else
+                {
+                    SelectedActor = PartyCharacter;
+                    PlayersCombatState = ECombatState::CharacterSelected;
+                    if(CharacterHUD != nullptr)
+                    {
+                        UpdateCharacterHUD();
+                    }
+                }
+            }
+        }
+        else if(PlayersCombatState == ECombatState::AbilityPrimed)
+        {
+            if(ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor()))
+            {
+                ensure(SelectedActor);
+                SelectedActor->SetTarget(PartyCharacter);
+                SelectedActor->ActivateAbilityByIndex(AbilityIndex);
+                if(CharacterHUD != nullptr)
+                {
+                    UpdateCharacterHUD();
+                }
+                PlayersCombatState = ECombatState::NoCharSelected;
+                SelectedActor = nullptr;
             }
         }
 
