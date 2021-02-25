@@ -47,6 +47,10 @@ protected:
 
 	UFUNCTION()
 	void SelectCharacter();
+	
+	bool GetSelectedCharacter(FHitResult& HitResult);
+	
+	void SetSelectedPartyCharacter(class ASTPartyCharacter* InActor);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	class ASTPartyCharacter* SelectedActor;

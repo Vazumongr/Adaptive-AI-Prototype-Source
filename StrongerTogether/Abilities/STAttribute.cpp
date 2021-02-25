@@ -62,6 +62,11 @@ void USTAttributeSet::OnRep_DefensePower(const FGameplayAttributeData& OldValue)
 	GAMEPLAYATTRIBUTE_REPNOTIFY(USTAttributeSet, DefensePower, OldValue);
 }
 
+void USTAttributeSet::OnRep_Speed(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USTAttributeSet, Speed, OldValue);
+}
+
 #pragma endregion
 
 

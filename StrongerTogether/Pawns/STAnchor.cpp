@@ -44,6 +44,7 @@ void ASTAnchor::SpawnPartyCharacter()
 			AddPartyCharacter(PartyMember);
 			PartyMember->SetOwningAnchor(this);
 			PartyMember->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+			PartyMember->bPartyCharacter = true;
 		}
 	}
 	ArrangeParty();

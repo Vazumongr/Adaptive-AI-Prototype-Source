@@ -56,6 +56,11 @@ public:
 	FGameplayAttributeData DefensePower;
 	ATTRIBUTE_ACCESSORS(USTAttributeSet, DefensePower)
 
+	/** Speed is used to calculate the order in which characters attack. Higher speed = Sooner attack */
+	UPROPERTY(BlueprintReadOnly, Category = "Damage", ReplicatedUsing = OnRep_Speed)
+	FGameplayAttributeData Speed;
+	ATTRIBUTE_ACCESSORS(USTAttributeSet, Speed)
+
 	/** Damage is a 'temporary' attribute used by the DamageExecution to calculate final damage, which then turns into -Health */
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData Damage;
@@ -83,4 +88,7 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_DefensePower(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
+	virtual void OnRep_Speed(const FGameplayAttributeData& OldValue);
 };

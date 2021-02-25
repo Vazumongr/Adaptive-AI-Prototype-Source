@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,16 +9,16 @@
 #include "StrongerTogether/Abilities/STAttributeSet.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 
-#include "STPartyCharacter.generated.h"
+#include "STCharacterBase.generated.h"
 
 UCLASS()
-class STRONGERTOGETHER_API ASTPartyCharacter : public APawn, public IAbilitySystemInterface
+class STRONGERTOGETHER_API ASTCharacterBase : public APawn, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	ASTPartyCharacter();
+	ASTCharacterBase();
 
 
 	virtual void PossessedBy(AController* NewController) override;

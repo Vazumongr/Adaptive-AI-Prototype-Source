@@ -37,87 +37,86 @@ void ASTPlayerController::SetAbilityIndex(int32 Index)
 void ASTPlayerController::AdvanceCharacters()
 {
     UE_LOG(LogTemp, Warning, TEXT("Advancing"));
-    FVector NextLocation;
 
     if(ASTMainGameMode* GameMode = Cast<ASTMainGameMode>(GetWorld()->GetAuthGameMode()))
     {
-        if(Counter > GameMode->PathPoints.Num() - 1 ) return;
-        NextLocation = GameMode->PathPoints[Counter]->GetActorLocation();
+        if(Counter > GameMode->PathPoints.Num() - 1 || Counter < 0) return;
+        const FVector NextLocation = GameMode->PathPoints[Counter]->GetActorLocation();
+        
+        if(ASTAnchor* Anchor = Cast<ASTAnchor>(GetPawn()))
+        {
+            Anchor->Advance(NextLocation);
+        }
+        Counter++;
     }
+}
 
-    if(ASTAnchor* Anchor = Cast<ASTAnchor>(GetPawn()))
-    {
-        Anchor->Advance(NextLocation);
-    }
+bool ASTPlayerController::GetSelectedCharacter(FHitResult& HitResult)
+{
+    FVector WorldLocation, WorldDirection;
+    DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
     
-    Counter++;
+    const FVector StartLocation = PlayerCameraManager->GetCameraLocation();
+    const FVector EndLocation = (StartLocation + (WorldDirection * 1000));
+        
+    TArray<AActor*> ActorsToIgnore;
+
+    return UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel18),
+        false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::White,
+        FLinearColor::Yellow, 5.0f);
+}
+
+void ASTPlayerController::SetSelectedPartyCharacter(ASTPartyCharacter* InActor)
+{
+    SelectedActor = InActor;
+    PlayersCombatState = ECombatState::CharacterSelected;
+    if(CharacterHUD != nullptr)
+    {
+        UpdateCharacterHUD();
+    }
 }
 
 void ASTPlayerController::SelectCharacter()
 {
-    FVector WorldLocation, WorldDirection;
-    DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-
-    FVector StartLocation = PlayerCameraManager->GetCameraLocation();
-    FVector EndLocation = (StartLocation + (WorldDirection * 1000));
-    
-    TArray<AActor*> ActorsToIgnore;
-
     FHitResult HitResult;
 
-    bool bHit = UKismetSystemLibrary::LineTraceSingle(this, StartLocation, EndLocation, UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel18),
-        false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor::White,
-        FLinearColor::Yellow, 5.0f);
-    UE_LOG(LogTemp, Warning, TEXT("%s"), bHit ? TEXT("true") : TEXT("false"));
-    if(bHit)
+    if(GetSelectedCharacter(HitResult))
     {
+        ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor());
+        if(PartyCharacter == nullptr) return;
         if(PlayersCombatState == ECombatState::EnemiesTurn) return;
         
         if(PlayersCombatState == ECombatState::NoCharSelected)
         {
-            if(ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor()))
+            if(PartyCharacter->bPartyCharacter)
             {
-                SelectedActor = PartyCharacter;
-                PlayersCombatState = ECombatState::CharacterSelected;
-                if(CharacterHUD != nullptr)
-                {
-                    UpdateCharacterHUD();
-                }
+                SetSelectedPartyCharacter(PartyCharacter);
             }
         }
         else if(PlayersCombatState == ECombatState::CharacterSelected)
         {
-            if(ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor()))
+            if(SelectedActor == PartyCharacter)
+                PlayersCombatState = ECombatState::AbilityPrimed;
+            else
             {
-                if(SelectedActor == PartyCharacter)
-                    PlayersCombatState = ECombatState::AbilityPrimed;
-                else
+                if(PartyCharacter->bPartyCharacter)
                 {
-                    SelectedActor = PartyCharacter;
-                    PlayersCombatState = ECombatState::CharacterSelected;
-                    if(CharacterHUD != nullptr)
-                    {
-                        UpdateCharacterHUD();
-                    }
+                    SetSelectedPartyCharacter(PartyCharacter);
                 }
             }
         }
         else if(PlayersCombatState == ECombatState::AbilityPrimed)
         {
-            if(ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor()))
+            ensure(SelectedActor);
+            SelectedActor->SetTarget(PartyCharacter);
+            SelectedActor->ActivateAbilityByIndex(AbilityIndex);
+            if(CharacterHUD != nullptr)
             {
-                ensure(SelectedActor);
-                SelectedActor->SetTarget(PartyCharacter);
-                SelectedActor->ActivateAbilityByIndex(AbilityIndex);
-                if(CharacterHUD != nullptr)
-                {
-                    UpdateCharacterHUD();
-                }
-                PlayersCombatState = ECombatState::NoCharSelected;
-                SelectedActor = nullptr;
+                UpdateCharacterHUD();
             }
+            PlayersCombatState = ECombatState::NoCharSelected;
+            SelectedActor = nullptr;
         }
-
     }
     else
     {
