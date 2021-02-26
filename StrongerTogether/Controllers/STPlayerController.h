@@ -52,6 +52,9 @@ protected:
 	
 	void SetSelectedPartyCharacter(class ASTPartyCharacter* InActor);
 
+	void HandlePartyCharacter(class ASTPartyCharacter* PartyCharacter);
+	void HandleEnemyCharacter(class ASTEnemyCharacter* EnemyCharacter);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	class ASTPartyCharacter* SelectedActor;
 

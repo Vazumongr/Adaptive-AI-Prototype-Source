@@ -10,7 +10,8 @@
 
 #include "StrongerTogether/GameModes/STMainGameMode.h"
 #include "StrongerTogether/Pawns/STAnchor.h"
-#include "StrongerTogether/Characters//STPartyCharacter.h"
+#include "StrongerTogether/Characters/STPartyCharacter.h"
+#include "StrongerTogether/Characters/STEnemyCharacter.h"
 #include "StrongerTogether/Widgets/STCharacterHUD.h"
 
 void ASTPlayerController::SetupInputComponent()
@@ -78,48 +79,52 @@ void ASTPlayerController::SetSelectedPartyCharacter(ASTPartyCharacter* InActor)
 
 void ASTPlayerController::SelectCharacter()
 {
+    if(PlayersCombatState == ECombatState::EnemiesTurn) return;
+    
     FHitResult HitResult;
 
     if(GetSelectedCharacter(HitResult))
     {
-        ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor());
-        if(PartyCharacter == nullptr) return;
-        if(PlayersCombatState == ECombatState::EnemiesTurn) return;
-        
-        if(PlayersCombatState == ECombatState::NoCharSelected)
-        {
-            if(PartyCharacter->bPartyCharacter)
-            {
-                SetSelectedPartyCharacter(PartyCharacter);
-            }
-        }
-        else if(PlayersCombatState == ECombatState::CharacterSelected)
-        {
-            if(SelectedActor == PartyCharacter)
-                PlayersCombatState = ECombatState::AbilityPrimed;
-            else
-            {
-                if(PartyCharacter->bPartyCharacter)
-                {
-                    SetSelectedPartyCharacter(PartyCharacter);
-                }
-            }
-        }
-        else if(PlayersCombatState == ECombatState::AbilityPrimed)
-        {
-            ensure(SelectedActor);
-            SelectedActor->SetTarget(PartyCharacter);
-            SelectedActor->ActivateAbilityByIndex(AbilityIndex);
-            if(CharacterHUD != nullptr)
-            {
-                UpdateCharacterHUD();
-            }
-            PlayersCombatState = ECombatState::NoCharSelected;
-            SelectedActor = nullptr;
-        }
+        if(ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor()))
+            HandlePartyCharacter(PartyCharacter);
+        if(ASTEnemyCharacter* EnemyCharacter = Cast<ASTEnemyCharacter>(HitResult.GetActor()))
+            HandleEnemyCharacter(EnemyCharacter);
     }
     else
     {
+        PlayersCombatState = ECombatState::NoCharSelected;
+        SelectedActor = nullptr;
+    }
+}
+
+void ASTPlayerController::HandlePartyCharacter(ASTPartyCharacter* PartyCharacter)
+{
+    if(PlayersCombatState == ECombatState::NoCharSelected)
+    {
+        SetSelectedPartyCharacter(PartyCharacter);
+    }
+    else if(PlayersCombatState == ECombatState::CharacterSelected)
+    {
+        if(SelectedActor == PartyCharacter)
+            PlayersCombatState = ECombatState::AbilityPrimed;
+        else
+        {
+            SetSelectedPartyCharacter(PartyCharacter);
+        }
+    }
+}
+
+void ASTPlayerController::HandleEnemyCharacter(ASTEnemyCharacter* EnemyCharacter)
+{
+    if(PlayersCombatState == ECombatState::AbilityPrimed)
+    {
+        ensure(SelectedActor);
+        SelectedActor->SetTarget(EnemyCharacter);
+        SelectedActor->ActivateAbilityByIndex(AbilityIndex);
+        if(CharacterHUD != nullptr)
+        {
+            UpdateCharacterHUD();
+        }
         PlayersCombatState = ECombatState::NoCharSelected;
         SelectedActor = nullptr;
     }

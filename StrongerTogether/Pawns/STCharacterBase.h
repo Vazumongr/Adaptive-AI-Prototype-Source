@@ -74,13 +74,7 @@ public:
 	
 #pragma region NonGAS
 	
-	void SetOwningAnchor(class ASTAnchor* InAnchor);
-
-	UFUNCTION(BlueprintImplementableEvent)
-    void StartMoving();
-
-	UFUNCTION(BlueprintImplementableEvent)
-    void StopMoving();
+	virtual void SetOwningAnchor(class ASTAnchor* InAnchor);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Name;
@@ -127,6 +121,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
 	class ASTAnchor* OwningAnchor;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta =(AllowPrivateAccess))
+	class USkeletalMeshComponent* SkeletalMeshComponent;
 
 };
