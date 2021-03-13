@@ -17,10 +17,14 @@ class STRONGERTOGETHER_API USTCharacterHUD : public UUserWidget
 public: 
 	virtual bool Initialize() override;
 
+	void ClearHUD() const;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
 	class ASTPlayerController* OwningController;
 
 protected:
+
+	void UpdateController(int32 AbilityIndex) const;
 
 	UFUNCTION()
 	void UpdateOwnerAbilityIndexToZero() const;

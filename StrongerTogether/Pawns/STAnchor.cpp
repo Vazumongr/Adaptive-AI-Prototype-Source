@@ -4,12 +4,19 @@
 #include "STAnchor.h"
 
 #include "StrongerTogether/Characters/STPartyCharacter.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 ASTAnchor::ASTAnchor()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	BoxCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
+	SetRootComponent(BoxCollider);
+
+	
+	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &ASTAnchor::ComponentBeginOverlap);
 
 }
 
@@ -30,7 +37,6 @@ void ASTAnchor::Tick(float DeltaSeconds)
             NewLocation.Y += MovementThisFrame;
             SetActorLocation(NewLocation);
 		}
-		
 	}
 }
 
@@ -91,5 +97,15 @@ void ASTAnchor::Advance(FVector NewLocation)
 	TargetLocation = NewLocation;
 	bIsMoving = true;
 	AnchorMoving.Broadcast();
+}
+
+void ASTAnchor::ComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+     bool bFromSweep, const FHitResult& SweepResult)
+{
+	if(ASTAnchor* EnemyAnchor = Cast<ASTAnchor>(OtherActor))
+	{
+		bIsMoving = false;
+		AnchorStopping.Broadcast();
+    }
 }
 

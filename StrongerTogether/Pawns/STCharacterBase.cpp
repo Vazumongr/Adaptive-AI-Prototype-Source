@@ -8,6 +8,7 @@
 #include "StrongerTogether/Pawns/STAnchor.h"
 #include "StrongerTogether/Abilities/STGameplayAbility.h"
 #include "StrongerTogether/DataAssets/STAbilityDataAsset.h"
+#include "StrongerTogether/Components/STActorWidgetComponent.h"
 
 // Sets default values
 ASTCharacterBase::ASTCharacterBase()
@@ -18,6 +19,9 @@ ASTCharacterBase::ASTCharacterBase()
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh Component"));
 	SetRootComponent(SkeletalMeshComponent);
 
+	ActorWidgetComponent = CreateDefaultSubobject<USTActorWidgetComponent>(TEXT("Actor Widget Component"));
+	ActorWidgetComponent->SetupAttachment(RootComponent);
+
 	AbilitySystemComponent = CreateDefaultSubobject<USTAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 
@@ -26,8 +30,14 @@ ASTCharacterBase::ASTCharacterBase()
 	CharacterLevel = 1;
 	bAbilitiesInitialized = false;
 
-	FGuid MyID = FGuid::NewGuid();
-	Name = MyID.ToString();
+	InitialAbilitiesDAs.Init(nullptr, 3);	
+}
+
+// Called when the game starts or when spawned
+void ASTCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+	
 }
 
 void ASTCharacterBase::PossessedBy(AController* NewController)
@@ -58,6 +68,37 @@ void ASTCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(ASTCharacterBase, CharacterLevel);
 }
 
+void ASTCharacterBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("PostEditChange"));
+
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	
+	if(PropertyChangedEvent.Property != nullptr && PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(ASTCharacterBase, InitialAbilitiesDAs))
+	{
+		if(PropertyChangedEvent.ChangeType == EPropertyChangeType::ArrayAdd)
+		{
+			if(InitialAbilitiesDAs.Num() >= 4)
+			{
+				InitialAbilitiesDAs.RemoveAt(3);
+			}
+		}
+		else if(PropertyChangedEvent.ChangeType == EPropertyChangeType::ArrayRemove)
+		{
+			if(InitialAbilitiesDAs.Num() < 3)
+			{
+				InitialAbilitiesDAs.Add(nullptr);
+			}
+		}
+		else if(PropertyChangedEvent.ChangeType == EPropertyChangeType::ArrayClear)
+		{
+			InitialAbilitiesDAs.Init(nullptr, 3);
+		}
+		
+	}
+	
+}
+
 void ASTCharacterBase::SetOwningAnchor(ASTAnchor* InAnchor)
 {
 	if(InAnchor != nullptr)
@@ -75,7 +116,7 @@ void ASTCharacterBase::AddStartupGameplayAbilities()
 		int32 Counter = 1;
 		for(USTAbilityDataAsset* DataAsset : InitialAbilitiesDAs)
 		{
-			if(DataAsset == nullptr) return;
+			if(DataAsset == nullptr) continue;
 			TSubclassOf<USTGameplayAbility>& Ability = DataAsset->GameplayAbilityClass;
 			FGameplayAbilitySpecHandle TempHandle = AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, GetCharacterLevel(), INDEX_NONE, this));
 			AbilitySpecHandles.Add(TempHandle);
@@ -166,12 +207,5 @@ bool ASTCharacterBase::SetCharacterLevel(int32 NewLevel)
 		return true;
 	}
 	return false;
-}
-
-// Called when the game starts or when spawned
-void ASTCharacterBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
 }
 

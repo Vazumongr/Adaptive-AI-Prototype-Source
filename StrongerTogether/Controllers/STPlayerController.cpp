@@ -26,13 +26,17 @@ void ASTPlayerController::BeginPlay()
     CharacterHUD = CreateWidget<USTCharacterHUD>(this, CharacterHUDClass);
     CharacterHUD->AddToViewport();
     CharacterHUD->OwningController = this;
+    CharacterHUD->ClearHUD();
     bShowMouseCursor = true;
     PlayersCombatState = ECombatState::NoCharSelected;
+    AbilityIndex = -1;
 }
 
-void ASTPlayerController::SetAbilityIndex(int32 Index)
+void ASTPlayerController::PrimeAbility(int32 Index)
 {
+    if(SelectedCharacter == nullptr) return;
     AbilityIndex = Index;
+    PlayersCombatState = ECombatState::AbilityPrimed;
 }
 
 void ASTPlayerController::AdvanceCharacters()
@@ -69,7 +73,7 @@ bool ASTPlayerController::GetSelectedCharacter(FHitResult& HitResult)
 
 void ASTPlayerController::SetSelectedPartyCharacter(ASTPartyCharacter* InActor)
 {
-    SelectedActor = InActor;
+    SelectedCharacter = InActor;
     PlayersCombatState = ECombatState::CharacterSelected;
     if(CharacterHUD != nullptr)
     {
@@ -85,18 +89,33 @@ void ASTPlayerController::SelectCharacter()
 
     if(GetSelectedCharacter(HitResult))
     {
-        if(ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor()))
-            HandlePartyCharacter(PartyCharacter);
-        if(ASTEnemyCharacter* EnemyCharacter = Cast<ASTEnemyCharacter>(HitResult.GetActor()))
-            HandleEnemyCharacter(EnemyCharacter);
+        if(HitResult.GetActor() == nullptr) return;
+        
+        if(PlayersCombatState != ECombatState::AbilityPrimed)   // At this point, our only options are NoCharSelected and CharSelected
+        {
+            if(ASTPartyCharacter* PartyCharacter = Cast<ASTPartyCharacter>(HitResult.GetActor()))
+            {
+                SetSelectedPartyCharacter(PartyCharacter);
+            }
+        }
+        else
+        {
+            SelectedCharacter->HandleTarget(HitResult.GetActor(), AbilityIndex);
+            PlayersCombatState = ECombatState::CharacterSelected;
+            if(CharacterHUD != nullptr)
+            {
+                UpdateCharacterHUD();
+            }
+        }
     }
     else
     {
         PlayersCombatState = ECombatState::NoCharSelected;
-        SelectedActor = nullptr;
+        SelectedCharacter = nullptr;
+        CharacterHUD->ClearHUD();
     }
 }
-
+/* Not needed. Bad refactor
 void ASTPlayerController::HandlePartyCharacter(ASTPartyCharacter* PartyCharacter)
 {
     if(PlayersCombatState == ECombatState::NoCharSelected)
@@ -105,7 +124,7 @@ void ASTPlayerController::HandlePartyCharacter(ASTPartyCharacter* PartyCharacter
     }
     else if(PlayersCombatState == ECombatState::CharacterSelected)
     {
-        if(SelectedActor == PartyCharacter)
+        if(SelectedCharacter == PartyCharacter)
             PlayersCombatState = ECombatState::AbilityPrimed;
         else
         {
@@ -118,14 +137,15 @@ void ASTPlayerController::HandleEnemyCharacter(ASTEnemyCharacter* EnemyCharacter
 {
     if(PlayersCombatState == ECombatState::AbilityPrimed)
     {
-        ensure(SelectedActor);
-        SelectedActor->SetTarget(EnemyCharacter);
-        SelectedActor->ActivateAbilityByIndex(AbilityIndex);
+        ensure(SelectedCharacter);
+        SelectedCharacter->SetTarget(EnemyCharacter);
+        SelectedCharacter->ActivateAbilityByIndex(AbilityIndex);
         if(CharacterHUD != nullptr)
         {
             UpdateCharacterHUD();
         }
         PlayersCombatState = ECombatState::NoCharSelected;
-        SelectedActor = nullptr;
+        SelectedCharacter = nullptr;
     }
 }
+*/

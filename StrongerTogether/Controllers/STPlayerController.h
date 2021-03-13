@@ -21,6 +21,7 @@ UDELEGATE()
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCharacterSelect);
 
 
+
 /**
  * 
  */
@@ -34,8 +35,9 @@ class STRONGERTOGETHER_API ASTPlayerController : public APlayerController
 	virtual void BeginPlay() override;
 	
 public:
+
 	UFUNCTION(BlueprintCallable)
-	void SetAbilityIndex(int32 Index);
+	void PrimeAbility(int32 Index);
 	
 	
 protected:
@@ -51,12 +53,12 @@ protected:
 	bool GetSelectedCharacter(FHitResult& HitResult);
 	
 	void SetSelectedPartyCharacter(class ASTPartyCharacter* InActor);
-
+/* Not needed. Bad Refactor
 	void HandlePartyCharacter(class ASTPartyCharacter* PartyCharacter);
 	void HandleEnemyCharacter(class ASTEnemyCharacter* EnemyCharacter);
-
+*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
-	class ASTPartyCharacter* SelectedActor;
+	class ASTPartyCharacter* SelectedCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	class USTCharacterHUD* CharacterHUD;

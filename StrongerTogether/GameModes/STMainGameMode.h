@@ -14,7 +14,13 @@ class STRONGERTOGETHER_API ASTMainGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+	ASTMainGameMode();
+
 	virtual void BeginPlay() override;
+
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
+	virtual void InitGameState() override;
 	
 public:
 
@@ -27,6 +33,7 @@ public:
 
 	UPROPERTY()
 	class ASTAnchor* Anchor;
+
 
 	UPROPERTY()
 	TArray<AActor*> PathPoints;

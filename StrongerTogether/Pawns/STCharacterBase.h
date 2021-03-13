@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "AbilitySystemInterface.h"		
 #include "GameFramework/Pawn.h"
 #include "StrongerTogether/Abilities/STAttributeSet.h"
@@ -20,11 +19,13 @@ public:
 	// Sets default values for this pawn's properties
 	ASTCharacterBase();
 
-
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_Controller() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 	// Implement IAbilitySystemInterface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 
@@ -77,7 +78,7 @@ public:
 	virtual void SetOwningAnchor(class ASTAnchor* InAnchor);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString Name;
+	FName Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString AbilityOne;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -124,5 +125,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta =(AllowPrivateAccess))
 	class USkeletalMeshComponent* SkeletalMeshComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta =(AllowPrivateAccess))
+	class USTActorWidgetComponent* ActorWidgetComponent;
 
 };

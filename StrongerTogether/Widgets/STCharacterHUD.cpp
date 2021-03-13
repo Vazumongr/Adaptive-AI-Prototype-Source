@@ -23,28 +23,41 @@ bool USTCharacterHUD::Initialize()
     return true;
 }
 
+void USTCharacterHUD::ClearHUD() const
+{
+    CharacterNameTextBlock->SetText(FText::FromString(""));
+    AbilityOneTextBlock->SetText(FText::FromString(""));
+    AbilityTwoTextBlock->SetText(FText::FromString(""));
+    AbilityThreeTextBlock->SetText(FText::FromString(""));
+    HealthTextBlock->SetText(FText::FromString(""));
+    ManaTextBlock->SetText(FText::FromString(""));
+}
+
 void USTCharacterHUD::UpdateOwnerAbilityIndexToZero() const
 {
-    if(OwningController != nullptr)
-        OwningController->SetAbilityIndex(0);
+    UpdateController(0);
 }
 
 void USTCharacterHUD::UpdateOwnerAbilityIndexToOne() const
 {
-    if(OwningController != nullptr)
-        OwningController->SetAbilityIndex(1);
+    UpdateController(1);
 }
 
 void USTCharacterHUD::UpdateOwnerAbilityIndexToTwo() const
 {
-    if(OwningController != nullptr)
-        OwningController->SetAbilityIndex(2);
+    UpdateController(2);
+}
+
+void USTCharacterHUD::UpdateController(int32 AbilityIndex) const
+{
+    if(OwningController == nullptr) return;
+    OwningController->PrimeAbility(AbilityIndex);
 }
 
 void USTCharacterHUD::Update(ASTPartyCharacter* InActor)
 {
     if(InActor == nullptr) return;
-    CharacterNameTextBlock->SetText(FText::FromString(InActor->Name));
+    CharacterNameTextBlock->SetText(FText::FromName(InActor->Name));
     AbilityOneTextBlock->SetText(FText::FromString(InActor->AbilityOne));
     AbilityTwoTextBlock->SetText(FText::FromString(InActor->AbilityTwo));
     AbilityThreeTextBlock->SetText(FText::FromString(InActor->AbilityThree));

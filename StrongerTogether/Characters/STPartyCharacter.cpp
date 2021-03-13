@@ -3,6 +3,8 @@
 
 #include "STPartyCharacter.h"
 
+
+#include "STEnemyCharacter.h"
 #include "StrongerTogether/Pawns/STAnchor.h"
 
 
@@ -22,4 +24,43 @@ void ASTPartyCharacter::SetOwningAnchor(ASTAnchor* InAnchor)
 		OwningAnchor->AnchorMoving.AddDynamic(this, &ASTPartyCharacter::StartMoving);
 		OwningAnchor->AnchorStopping.AddDynamic(this, &ASTPartyCharacter::StopMoving);
 	}
+}
+
+void ASTPartyCharacter::HandleTarget(AActor* TargetActor, int32 AbilityIndexToActivate)
+{
+	if(TargetActor == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("You called HandleTarget with a nullptr!"));
+	}
+	else
+	{
+		if(AbilityIndexToActivate > AbilitySpecHandles.Num() - 1 || AbilityIndexToActivate < 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("That ability is out of bounds!"));
+		}
+		UE_LOG(LogTemp, Warning, TEXT("You are telling me to use ability %i on target %s"), AbilityIndexToActivate, *TargetActor->GetName());
+
+		// Check tags on ability
+		FGameplayAbilitySpecHandle& AbilityToActivate = AbilitySpecHandles[AbilityIndexToActivate];
+		UGameplayAbility* AbilityBeingActivated = AbilitySystemComponent->FindAbilitySpecFromHandle(AbilityToActivate)->Ability;
+		FGameplayTagContainer& AbilitiesTags = AbilityBeingActivated->AbilityTags;
+		
+		if(Cast<ASTPartyCharacter>(TargetActor)) // ally
+		{
+			if(AbilitiesTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName("Ability.Targets.Ally"))))
+			{
+				SetTarget(TargetActor);
+				ActivateAbilityByIndex(AbilityIndexToActivate);
+			}
+		}
+		else if(Cast<ASTEnemyCharacter>(TargetActor))
+		{
+			if(AbilitiesTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName("Ability.Targets.Enemy"))))
+			{
+				SetTarget(TargetActor);
+				ActivateAbilityByIndex(AbilityIndexToActivate);
+			}
+		}
+	}
+		
 }

@@ -30,6 +30,12 @@ public:
 
 	void Advance(FVector NewLocation);
 	
+	//UPrimitiveComponent, OnComponentBeginOverlap, UPrimitiveComponent*, OverlappedComponent, AActor*, OtherActor,
+    //UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex, bool, bFromSweep, const FHitResult &, SweepResult);
+	UFUNCTION()
+	void ComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+	
 #pragma endregion 
 
 #pragma region VARIABLES
@@ -58,4 +64,8 @@ public:
 
 	FVector TargetLocation;
 #pragma endregion
+
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess))
+	class UBoxComponent* BoxCollider;
 };
