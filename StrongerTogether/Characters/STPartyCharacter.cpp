@@ -5,7 +5,7 @@
 
 
 #include "STEnemyCharacter.h"
-#include "StrongerTogether/Pawns/STAnchor.h"
+#include "StrongerTogether/Pawns/STPlayerAnchor.h"
 
 
 // Sets default values
@@ -13,20 +13,23 @@ ASTPartyCharacter::ASTPartyCharacter()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	AllyClass = this->StaticClass();
+	EnemyClass = ASTEnemyCharacter::StaticClass();
 }
 
 
 void ASTPartyCharacter::SetOwningAnchor(ASTAnchor* InAnchor)
 {
-	if(InAnchor != nullptr)
+	if(ASTPlayerAnchor* PlayerAnchor = Cast<ASTPlayerAnchor>(InAnchor))
 	{
 		OwningAnchor = InAnchor;
-		OwningAnchor->AnchorMoving.AddDynamic(this, &ASTPartyCharacter::StartMoving);
-		OwningAnchor->AnchorStopping.AddDynamic(this, &ASTPartyCharacter::StopMoving);
+		PlayerAnchor->AnchorMoving.AddDynamic(this, &ASTPartyCharacter::StartMoving);
+		PlayerAnchor->AnchorStopping.AddDynamic(this, &ASTPartyCharacter::StopMoving);
 	}
 }
 
-void ASTPartyCharacter::HandleTarget(AActor* TargetActor, int32 AbilityIndexToActivate)
+void ASTPartyCharacter::HandleTarget2(AActor* TargetActor, int32 AbilityIndexToActivate)
 {
 	if(TargetActor == nullptr)
 	{

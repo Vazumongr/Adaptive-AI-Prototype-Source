@@ -32,7 +32,7 @@ public:
 	TSubclassOf<AActor> PathPointClass;
 
 	UPROPERTY()
-	class ASTAnchor* Anchor;
+	class ASTPlayerAnchor* Anchor;
 
 
 	UPROPERTY()

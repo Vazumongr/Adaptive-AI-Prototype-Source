@@ -3,8 +3,8 @@
 
 #include "STAnchor.h"
 
-#include "StrongerTogether/Characters/STPartyCharacter.h"
 #include "Components/BoxComponent.h"
+#include "StrongerTogether/Characters/STEnemyCharacter.h"
 
 // Sets default values
 ASTAnchor::ASTAnchor()
@@ -14,43 +14,29 @@ ASTAnchor::ASTAnchor()
 
 	BoxCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
 	SetRootComponent(BoxCollider);
-
-	
-	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &ASTAnchor::ComponentBeginOverlap);
+	BoxCollider->SetBoxExtent(FVector(32,300,32));
 
 }
 
-void ASTAnchor::Tick(float DeltaSeconds)
+void ASTAnchor::BeginPlay()
 {
-	if(bIsMoving)
-	{
-		const float MovementThisFrame = MovementSpeed * DeltaSeconds;
-		if(FMath::Abs(TargetLocation.Y - GetActorLocation().Y) <= MovementThisFrame)
-		{
-			SetActorLocation(TargetLocation);
-			bIsMoving = false;
-			AnchorStopping.Broadcast();
-		}
-		else
-		{
-			FVector NewLocation = GetActorLocation();
-            NewLocation.Y += MovementThisFrame;
-            SetActorLocation(NewLocation);
-		}
-	}
+	Super::BeginPlay();
+	SpawnPartyCharacter();
 }
 
 void ASTAnchor::SpawnPartyCharacter()
 {
 	FActorSpawnParameters SpawnParameters;
-	for(TSubclassOf<ASTPartyCharacter> Class : CharactersClasses)
+	for(TSubclassOf<ASTCharacterBase> Class : CharactersClasses)
 	{
-		if(ASTPartyCharacter* PartyMember = GetWorld()->SpawnActor<ASTPartyCharacter>(Class, GetActorLocation(), GetActorRotation(), SpawnParameters))
+		if(Class->IsChildOf(ASTEnemyCharacter::StaticClass()))
 		{
-			AddPartyCharacter(PartyMember);
-			PartyMember->SetOwningAnchor(this);
-			PartyMember->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-			PartyMember->bPartyCharacter = true;
+			if(ASTEnemyCharacter* PartyMember = GetWorld()->SpawnActor<ASTEnemyCharacter>(Class, GetActorLocation(), GetActorRotation(), SpawnParameters))
+            {
+            	AddPartyCharacter(PartyMember);
+            	PartyMember->SetOwningAnchor(this);
+            	PartyMember->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+            }
 		}
 	}
 	ArrangeParty();
@@ -90,22 +76,5 @@ void ASTAnchor::AddPartyCharacter(AActor* InActor)
 void ASTAnchor::RemovePartyCharacter(AActor* InActor)
 {
 	PartyActors.Remove(InActor);
-}
-
-void ASTAnchor::Advance(FVector NewLocation)
-{
-	TargetLocation = NewLocation;
-	bIsMoving = true;
-	AnchorMoving.Broadcast();
-}
-
-void ASTAnchor::ComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-     bool bFromSweep, const FHitResult& SweepResult)
-{
-	if(ASTAnchor* EnemyAnchor = Cast<ASTAnchor>(OtherActor))
-	{
-		bIsMoving = false;
-		AnchorStopping.Broadcast();
-    }
 }
 

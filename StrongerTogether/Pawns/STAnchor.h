@@ -7,7 +7,7 @@
 #include "STAnchor.generated.h"
 
 UDELEGATE()
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAnchorMoving);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAnchorMoving);	//Player Only
 
 UCLASS()
 class STRONGERTOGETHER_API ASTAnchor : public APawn
@@ -20,52 +20,32 @@ public:
 	// Sets default values for this pawn's properties
 	ASTAnchor();
 
-	virtual void Tick(float DeltaSeconds) override;
-
-	void SpawnPartyCharacter();
+	virtual void SpawnPartyCharacter();	// Override for player
 	void ArrangeParty();
+
+	virtual void BeginPlay() override;
 
 	void AddPartyCharacter(AActor* InActor);
 	void RemovePartyCharacter(AActor* InActor);
-
-	void Advance(FVector NewLocation);
-	
-	//UPrimitiveComponent, OnComponentBeginOverlap, UPrimitiveComponent*, OverlappedComponent, AActor*, OtherActor,
-    //UPrimitiveComponent*, OtherComp, int32, OtherBodyIndex, bool, bFromSweep, const FHitResult &, SweepResult);
-	UFUNCTION()
-	void ComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
 	
 #pragma endregion 
 
 #pragma region VARIABLES
-	FAnchorMoving AnchorMoving;
-	FAnchorMoving AnchorStopping;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AActor*> PartyActors;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
-	TSubclassOf<class ASTPartyCharacter> CharactersClass;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
-	TArray<TSubclassOf<class ASTPartyCharacter>> CharactersClasses;
+	TArray<TSubclassOf<class ASTCharacterBase>> CharactersClasses;
 
-	bool bIsMoving = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MovementSpeed = 20.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PartyOffset = 50.f;
 
 	TArray<float> Offsets;
-
-	bool bMoveForward = false;
-
-	FVector TargetLocation;
 #pragma endregion
 
-private:
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	class UBoxComponent* BoxCollider;
 };

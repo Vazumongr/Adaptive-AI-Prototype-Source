@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "StrongerTogether/GameModes/STMainGameMode.h"
-#include "StrongerTogether/Pawns/STAnchor.h"
+#include "StrongerTogether/Pawns/STPlayerAnchor.h"
 #include "StrongerTogether/Characters/STPartyCharacter.h"
 #include "StrongerTogether/Characters/STEnemyCharacter.h"
 #include "StrongerTogether/Widgets/STCharacterHUD.h"
@@ -21,13 +21,18 @@ void ASTPlayerController::SetupInputComponent()
     InputComponent->BindAction("SelectCharacter", IE_Pressed, this, &ASTPlayerController::SelectCharacter);
 }
 
-void ASTPlayerController::BeginPlay()
+void ASTPlayerController::SetupHUD()
 {
     CharacterHUD = CreateWidget<USTCharacterHUD>(this, CharacterHUDClass);
     CharacterHUD->AddToViewport();
     CharacterHUD->OwningController = this;
     CharacterHUD->ClearHUD();
     bShowMouseCursor = true;
+}
+
+void ASTPlayerController::BeginPlay()
+{
+    SetupHUD();
     PlayersCombatState = ECombatState::NoCharSelected;
     AbilityIndex = -1;
 }
@@ -41,16 +46,15 @@ void ASTPlayerController::PrimeAbility(int32 Index)
 
 void ASTPlayerController::AdvanceCharacters()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Advancing"));
 
     if(ASTMainGameMode* GameMode = Cast<ASTMainGameMode>(GetWorld()->GetAuthGameMode()))
     {
         if(Counter > GameMode->PathPoints.Num() - 1 || Counter < 0) return;
         const FVector NextLocation = GameMode->PathPoints[Counter]->GetActorLocation();
         
-        if(ASTAnchor* Anchor = Cast<ASTAnchor>(GetPawn()))
+        if(ASTPlayerAnchor* Anchor = Cast<ASTPlayerAnchor>(GetPawn()))
         {
-            Anchor->Advance(NextLocation);
+            Anchor->Advance();
         }
         Counter++;
     }
@@ -115,37 +119,3 @@ void ASTPlayerController::SelectCharacter()
         CharacterHUD->ClearHUD();
     }
 }
-/* Not needed. Bad refactor
-void ASTPlayerController::HandlePartyCharacter(ASTPartyCharacter* PartyCharacter)
-{
-    if(PlayersCombatState == ECombatState::NoCharSelected)
-    {
-        SetSelectedPartyCharacter(PartyCharacter);
-    }
-    else if(PlayersCombatState == ECombatState::CharacterSelected)
-    {
-        if(SelectedCharacter == PartyCharacter)
-            PlayersCombatState = ECombatState::AbilityPrimed;
-        else
-        {
-            SetSelectedPartyCharacter(PartyCharacter);
-        }
-    }
-}
-
-void ASTPlayerController::HandleEnemyCharacter(ASTEnemyCharacter* EnemyCharacter)
-{
-    if(PlayersCombatState == ECombatState::AbilityPrimed)
-    {
-        ensure(SelectedCharacter);
-        SelectedCharacter->SetTarget(EnemyCharacter);
-        SelectedCharacter->ActivateAbilityByIndex(AbilityIndex);
-        if(CharacterHUD != nullptr)
-        {
-            UpdateCharacterHUD();
-        }
-        PlayersCombatState = ECombatState::NoCharSelected;
-        SelectedCharacter = nullptr;
-    }
-}
-*/

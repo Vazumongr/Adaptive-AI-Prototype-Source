@@ -19,7 +19,7 @@ void ASTMainGameState::Init()
 	}
 }
 
-void ASTMainGameState::ReceivePlayerAnchor(ASTAnchor* InAnchor)
+void ASTMainGameState::ReceivePlayerAnchor(ASTPlayerAnchor* InAnchor)
 {
 	if(InAnchor != nullptr)
 	{

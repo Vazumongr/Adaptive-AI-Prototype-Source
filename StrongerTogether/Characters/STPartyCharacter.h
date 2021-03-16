@@ -18,7 +18,7 @@ public:
 	
 	virtual void SetOwningAnchor(class ASTAnchor* InAnchor) override;
 
-	void HandleTarget(AActor* TargetActor, int32 AbilityToActivate);
+	void HandleTarget2(AActor* TargetActor, int32 AbilityIndexToActivate);
 
 	UFUNCTION(BlueprintImplementableEvent)
     void StartMoving();

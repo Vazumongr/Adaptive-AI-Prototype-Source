@@ -30,6 +30,8 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 
 	void AddStartupGameplayAbilities();
+
+	void HandleTarget(AActor* TargetActor, int32 AbilityToActivate);
 	
 	UFUNCTION(BlueprintCallable)
 	void ActivateAbilityByIndex(int32 Index);
@@ -51,9 +53,6 @@ public:
 	float HealthValue;
 
 	bool bAbilitiesInitialized = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite);
-	bool bPartyCharacter = false;
 
 	UPROPERTY(EditAnywhere, Replicated, Category = "Abilities")
 	int32 CharacterLevel;
@@ -119,6 +118,18 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY()
+	TSubclassOf<ASTCharacterBase> AllyClass;
+
+	UPROPERTY()
+	TSubclassOf<ASTCharacterBase> EnemyClass;
+	
+	UPROPERTY()
+	UClass* AllyClassPtr;
+
+	UPROPERTY()
+	UClass* EnemyClassPtr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
 	class ASTAnchor* OwningAnchor;

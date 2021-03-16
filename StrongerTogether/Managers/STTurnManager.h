@@ -21,12 +21,12 @@ class STRONGERTOGETHER_API ASTTurnManager : public AInfo
 public:
 
 	
-	void SetPlayerAnchorReference(class ASTAnchor* InAnchor);
+	void SetPlayerAnchorReference(class ASTPlayerAnchor* InAnchor);
 	void SetEnemyAnchorReference(class ASTAnchor* EnemyAnchor);
 
 private:
 	UPROPERTY()
-	class ASTAnchor* PlayerAnchor;
+	class ASTPlayerAnchor* PlayerAnchor;
 	UPROPERTY()
 	class ASTAnchor* EnemyAnchor;
 };

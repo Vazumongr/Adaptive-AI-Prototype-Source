@@ -146,6 +146,46 @@ void ASTCharacterBase::AddStartupGameplayAbilities()
 	
 }
 
+void ASTCharacterBase::HandleTarget(AActor* TargetActor, int32 AbilityIndexToActivate)
+{
+	if(TargetActor == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("You called HandleTarget with a nullptr!"));
+	}
+	else
+	{
+		if(AbilityIndexToActivate > AbilitySpecHandles.Num() - 1 || AbilityIndexToActivate < 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("That ability is out of bounds!"));
+		}
+		UE_LOG(LogTemp, Warning, TEXT("You are telling me to use ability %i on target %s"), AbilityIndexToActivate, *TargetActor->GetName());
+
+		// Check tags on ability
+		FGameplayAbilitySpecHandle& AbilityToActivate = AbilitySpecHandles[AbilityIndexToActivate];
+		UGameplayAbility* AbilityBeingActivated = AbilitySystemComponent->FindAbilitySpecFromHandle(AbilityToActivate)->Ability;
+		FGameplayTagContainer& AbilitiesTags = AbilityBeingActivated->AbilityTags;
+
+		
+		
+		if(/*Cast<AllyClassPtr>(TargetActor)*/ AllyClass != nullptr && TargetActor->GetClass()->IsChildOf(AllyClass)) // ally
+		{
+			if(AbilitiesTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName("Ability.Targets.Ally"))))
+			{
+				SetTarget(TargetActor);
+				ActivateAbilityByIndex(AbilityIndexToActivate);
+			}
+		}
+		else if(/*Cast<EnemyClass>(TargetActor)*/ EnemyClass != nullptr && TargetActor->GetClass()->IsChildOf(EnemyClass))
+		{
+			if(AbilitiesTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName("Ability.Targets.Enemy"))))
+			{
+				SetTarget(TargetActor);
+				ActivateAbilityByIndex(AbilityIndexToActivate);
+			}
+		}
+	}
+}
+
 void ASTCharacterBase::ActivateAbilityByIndex(int32 Index)
 {
 	if(AbilitySystemComponent)

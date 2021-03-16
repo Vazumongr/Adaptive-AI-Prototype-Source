@@ -31,6 +31,7 @@ class STRONGERTOGETHER_API ASTPlayerController : public APlayerController
 	GENERATED_BODY()
 
 	virtual void SetupInputComponent() override;
+	void SetupHUD();
 
 	virtual void BeginPlay() override;
 	

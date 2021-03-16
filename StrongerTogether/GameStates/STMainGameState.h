@@ -19,7 +19,7 @@ public:
 
 	void Init();
 
-	void ReceivePlayerAnchor(class ASTAnchor* InAnchor);
+	void ReceivePlayerAnchor(class ASTPlayerAnchor* InAnchor);
 	
 private:
 	UPROPERTY()
@@ -28,6 +28,6 @@ private:
 	UPROPERTY()
 	class ASTTurnManager* TurnManager;
 	UPROPERTY()
-	class ASTAnchor* PlayerAnchor;
+	class ASTPlayerAnchor* PlayerAnchor;
 	
 };
