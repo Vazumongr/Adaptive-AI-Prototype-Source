@@ -17,20 +17,6 @@ void ASTPlayerAnchor::Tick(float DeltaSeconds)
 	if(bIsMoving)
 	{
 		const float MovementThisFrame = MovementSpeed * DeltaSeconds;
-		/*
-		if(FMath::Abs(TargetLocation.Y - GetActorLocation().Y) <= MovementThisFrame)
-		{
-			SetActorLocation(TargetLocation);
-			bIsMoving = false;
-			AnchorStopping.Broadcast();
-		}
-		else
-		{
-			FVector NewLocation = GetActorLocation();
-			NewLocation.Y += MovementThisFrame;
-			SetActorLocation(NewLocation);
-		}
-		*/
 		FVector NewLocation = GetActorLocation();
 		NewLocation.Y += MovementThisFrame;
 		SetActorLocation(NewLocation);
