@@ -31,7 +31,7 @@ public:
 
 	void AddStartupGameplayAbilities();
 
-	void HandleTarget(AActor* TargetActor, int32 AbilityToActivate);
+	bool HandleTarget(AActor* TargetActor, int32 AbilityToActivate);
 	
 	UFUNCTION(BlueprintCallable)
 	void ActivateAbilityByIndex(int32 Index);
@@ -71,6 +71,8 @@ public:
 	// Used for setting default character stats
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
 	TSubclassOf<class UGameplayEffect> InitialStats;
+
+	bool bMyTurn;
 	
 #pragma region NonGAS
 	

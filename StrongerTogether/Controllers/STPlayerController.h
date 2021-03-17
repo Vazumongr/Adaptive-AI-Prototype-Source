@@ -39,6 +39,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PrimeAbility(int32 Index);
+
+	bool bMyTurn;
 	
 	
 protected:
@@ -54,10 +56,7 @@ protected:
 	bool GetSelectedCharacter(FHitResult& HitResult);
 	
 	void SetSelectedPartyCharacter(class ASTPartyCharacter* InActor);
-/* Not needed. Bad Refactor
-	void HandlePartyCharacter(class ASTPartyCharacter* PartyCharacter);
-	void HandleEnemyCharacter(class ASTEnemyCharacter* EnemyCharacter);
-*/
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	class ASTPartyCharacter* SelectedCharacter;
 

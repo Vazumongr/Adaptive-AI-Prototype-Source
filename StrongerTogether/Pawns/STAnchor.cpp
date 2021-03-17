@@ -75,12 +75,12 @@ void ASTAnchor::ArrangeParty()
 	}
 }
 
-void ASTAnchor::AddPartyCharacter(AActor* InActor)
+void ASTAnchor::AddPartyCharacter(class ASTCharacterBase* InActor)
 {
 	PartyActors.Add(InActor);
 }
 
-void ASTAnchor::RemovePartyCharacter(AActor* InActor)
+void ASTAnchor::RemovePartyCharacter(class ASTCharacterBase* InActor)
 {
 	PartyActors.Remove(InActor);
 }

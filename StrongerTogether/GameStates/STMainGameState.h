@@ -38,9 +38,9 @@ public:
 
 	void Init();
 
-	void ReceivePlayerAnchor(class ASTPlayerAnchor* InAnchor);
+	void ReceivePlayer(class ASTPlayerAnchor* InAnchor, class APlayerController* InPlayerController);
 
-	void StartCombat();
+	void StartCombat(AActor* EnemyAnchor);
 
 	FCombatStartedM CombatStartedDelegateM;
 	
@@ -52,5 +52,11 @@ private:
 	class ASTTurnManager* TurnManager;
 	UPROPERTY()
 	class ASTPlayerAnchor* PlayerAnchor;
+	UPROPERTY()
+	class ASTAnchor* EnemyAnchor;
+	UPROPERTY()
+	class ASTPlayerController* PlayerController;
+	UPROPERTY()
+	class ASTEnemyController* EnemyController;
 	
 };

@@ -25,15 +25,15 @@ public:
 
 	virtual void BeginPlay() override;
 
-	void AddPartyCharacter(AActor* InActor);
-	void RemovePartyCharacter(AActor* InActor);
+	void AddPartyCharacter(class ASTCharacterBase* InActor);
+	void RemovePartyCharacter(class ASTCharacterBase* InActor);
 	
 #pragma endregion 
 
 #pragma region VARIABLES
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AActor*> PartyActors;
+	TArray<class ASTCharacterBase*> PartyActors;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	TArray<TSubclassOf<class ASTCharacterBase>> CharactersClasses;

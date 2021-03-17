@@ -37,6 +37,7 @@ ASTCharacterBase::ASTCharacterBase()
 void ASTCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	bMyTurn = false;
 	
 }
 
@@ -146,17 +147,20 @@ void ASTCharacterBase::AddStartupGameplayAbilities()
 	
 }
 
-void ASTCharacterBase::HandleTarget(AActor* TargetActor, int32 AbilityIndexToActivate)
+bool ASTCharacterBase::HandleTarget(AActor* TargetActor, int32 AbilityIndexToActivate)
 {
+	if(!bMyTurn) return false;
 	if(TargetActor == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("You called HandleTarget with a nullptr!"));
+		return false;
 	}
 	else
 	{
 		if(AbilityIndexToActivate > AbilitySpecHandles.Num() - 1 || AbilityIndexToActivate < 0)
 		{
 			UE_LOG(LogTemp, Error, TEXT("That ability is out of bounds!"));
+			return false;
 		}
 		UE_LOG(LogTemp, Warning, TEXT("You are telling me to use ability %i on target %s"), AbilityIndexToActivate, *TargetActor->GetName());
 
@@ -184,6 +188,7 @@ void ASTCharacterBase::HandleTarget(AActor* TargetActor, int32 AbilityIndexToAct
 			}
 		}
 	}
+	return true;
 }
 
 void ASTCharacterBase::ActivateAbilityByIndex(int32 Index)

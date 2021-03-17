@@ -32,6 +32,7 @@ void ASTPlayerController::SetupHUD()
 
 void ASTPlayerController::BeginPlay()
 {
+    Super::BeginPlay();
     SetupHUD();
     PlayersCombatState = ECombatState::NoCharSelected;
     AbilityIndex = -1;

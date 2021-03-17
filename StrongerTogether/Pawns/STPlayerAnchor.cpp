@@ -58,6 +58,6 @@ void ASTPlayerAnchor::ComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 	{
 		bIsMoving = false;
 		AnchorStopping.Broadcast();
-		GameState->StartCombat();
+		GameState->StartCombat(EnemyAnchor);
 	}
 }

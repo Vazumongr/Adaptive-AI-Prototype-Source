@@ -52,7 +52,7 @@ void ASTMainGameMode::HandleStartingNewPlayer_Implementation(APlayerController* 
         
         if(ASTMainGameState* MainGameState = Cast<ASTMainGameState>(GameState))
         {
-            MainGameState->ReceivePlayerAnchor(Anchor);
+            MainGameState->ReceivePlayer(Anchor, NewPlayer);
         }
     }
 
