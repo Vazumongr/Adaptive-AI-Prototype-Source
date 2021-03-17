@@ -41,7 +41,19 @@ public:
 	void ReceivePlayerAnchor(class ASTPlayerAnchor* InAnchor);
 
 	void StartCombat();
+
+	UPROPERTY()
+	FCombatStartedDM CombatStartedDelegateDM;
+
+	UPROPERTY()
+	FCombatStartedD CombatStartedDelegateD;
+
 	FCombatStartedM CombatStartedDelegateM;
+
+	FCombatStarted CombatStarted;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	EDelegate SelectedDelegateType;
 	
 private:
 	UPROPERTY()

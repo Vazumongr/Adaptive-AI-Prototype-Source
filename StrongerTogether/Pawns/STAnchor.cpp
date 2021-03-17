@@ -26,6 +26,10 @@ void ASTAnchor::BeginPlay()
 	GameState = Cast<ASTMainGameState>(GetWorld()->GetGameState());
 	if(GameState != nullptr)
 	{
+		GameState->CombatStartedDelegateDM.AddDynamic(this, &ASTAnchor::CombatStarted);
+		GameState->CombatStarted.BindUFunction(this, FName("CombatStarted"));
+		GameState->CombatStarted.BindUObject(this, &ASTAnchor::CombatStarted);
+		GameState->CombatStartedDelegateD.BindUFunction(this, FName("CombatStarted"));
 		GameState->CombatStartedDelegateM.AddUObject(this, &ASTAnchor::CombatStarted);
 	}
 	bInCombat = false;
