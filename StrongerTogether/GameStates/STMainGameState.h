@@ -6,6 +6,25 @@
 #include "GameFramework/GameStateBase.h"
 #include "STMainGameState.generated.h"
 
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCombatStartedDM);
+
+UDELEGATE()
+DECLARE_DYNAMIC_DELEGATE(FCombatStartedD);
+
+DECLARE_MULTICAST_DELEGATE(FCombatStartedM);
+
+DECLARE_DELEGATE(FCombatStarted);
+
+UENUM()
+enum class EDelegate : uint8
+{
+	FCombatStartedDM,
+	FCombatStartedD,
+	FCombatStartedM,
+	FCombatStarted
+};
+
 /**
  * 
  */
@@ -20,6 +39,21 @@ public:
 	void Init();
 
 	void ReceivePlayerAnchor(class ASTPlayerAnchor* InAnchor);
+
+	void StartCombat();
+
+	UPROPERTY()
+	FCombatStartedDM CombatStartedDelegateDM;
+
+	UPROPERTY()
+	FCombatStartedD CombatStartedDelegateD;
+
+	FCombatStartedM CombatStartedDelegateM;
+
+	FCombatStarted CombatStarted;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	EDelegate SelectedDelegateType;
 	
 private:
 	UPROPERTY()

@@ -49,14 +49,13 @@ void ASTMainGameMode::HandleStartingNewPlayer_Implementation(APlayerController* 
     if(Anchor != nullptr)
     {
         NewPlayer->Possess(Anchor);
-        // Calling from Anchor::BeingPlay() now
-        //Anchor->SpawnPartyCharacter();
+        
+        if(ASTMainGameState* MainGameState = Cast<ASTMainGameState>(GameState))
+        {
+            MainGameState->ReceivePlayerAnchor(Anchor);
+        }
     }
 
-    if(ASTMainGameState* MainGameState = Cast<ASTMainGameState>(GameState))
-    {
-        MainGameState->ReceivePlayerAnchor(Anchor);
-    }
         
             
             

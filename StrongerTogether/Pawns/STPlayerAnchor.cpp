@@ -2,6 +2,7 @@
 
 #include "StrongerTogether/Characters/STPartyCharacter.h"
 #include "Components/BoxComponent.h"
+#include "StrongerTogether/GameStates/STMainGameState.h"
 
 ASTPlayerAnchor::ASTPlayerAnchor()
 {
@@ -13,8 +14,6 @@ ASTPlayerAnchor::ASTPlayerAnchor()
 void ASTPlayerAnchor::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
-	UE_LOG(LogTemp, Warning, TEXT("%i"), bIsMoving);
 	if(bIsMoving)
 	{
 		const float MovementThisFrame = MovementSpeed * DeltaSeconds;
@@ -69,9 +68,10 @@ void ASTPlayerAnchor::ComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
      bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Overlapping"));
-	if(Cast<ASTAnchor>(OtherActor))
+	if(ASTAnchor* EnemyAnchor = Cast<ASTAnchor>(OtherActor))
 	{
 		bIsMoving = false;
 		AnchorStopping.Broadcast();
+		GameState->StartCombat();
 	}
 }

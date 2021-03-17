@@ -5,6 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "StrongerTogether/Characters/STEnemyCharacter.h"
+#include "StrongerTogether/GameStates/STMainGameState.h"
 
 // Sets default values
 ASTAnchor::ASTAnchor()
@@ -22,6 +23,16 @@ void ASTAnchor::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawnPartyCharacter();
+	GameState = Cast<ASTMainGameState>(GetWorld()->GetGameState());
+	if(GameState != nullptr)
+	{
+		GameState->CombatStartedDelegateDM.AddDynamic(this, &ASTAnchor::CombatStarted);
+		GameState->CombatStarted.BindUFunction(this, FName("CombatStarted"));
+		GameState->CombatStarted.BindUObject(this, &ASTAnchor::CombatStarted);
+		GameState->CombatStartedDelegateD.BindUFunction(this, FName("CombatStarted"));
+		GameState->CombatStartedDelegateM.AddUObject(this, &ASTAnchor::CombatStarted);
+	}
+	bInCombat = false;
 }
 
 void ASTAnchor::SpawnPartyCharacter()
@@ -76,5 +87,11 @@ void ASTAnchor::AddPartyCharacter(AActor* InActor)
 void ASTAnchor::RemovePartyCharacter(AActor* InActor)
 {
 	PartyActors.Remove(InActor);
+}
+
+void ASTAnchor::CombatStarted()
+{
+	UE_LOG(LogTemp, Warning, TEXT("CombatStarted!"));
+	bInCombat = true;
 }
 

@@ -38,14 +38,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	TArray<TSubclassOf<class ASTCharacterBase>> CharactersClasses;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PartyOffset = 50.f;
 
 	TArray<float> Offsets;
+
+	bool bInCombat;
 #pragma endregion
 
 protected:
+	UFUNCTION()
+	void CombatStarted();
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	class UBoxComponent* BoxCollider;
+
+	UPROPERTY()
+	class ASTMainGameState* GameState;
 };
