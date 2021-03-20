@@ -9,6 +9,7 @@
 #include "StrongerTogether/Abilities/STGameplayAbility.h"
 #include "StrongerTogether/DataAssets/STAbilityDataAsset.h"
 #include "StrongerTogether/Components/STActorWidgetComponent.h"
+#include "StrongerTogether/GameStates/STMainGameState.h"
 
 // Sets default values
 ASTCharacterBase::ASTCharacterBase()
@@ -38,6 +39,7 @@ void ASTCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	bMyTurn = false;
+	AbilitySystemComponent->AbilityCommittedCallbacks.AddUObject(this, &ASTCharacterBase::TurnOver);
 	
 }
 
@@ -60,6 +62,11 @@ void ASTCharacterBase::OnRep_Controller()
 	{
 		AbilitySystemComponent->RefreshAbilityActorInfo();
 	}
+}
+
+void ASTCharacterBase::TurnOver(UGameplayAbility*)
+{
+	Cast<ASTMainGameState>(GetWorld()->GetGameState())->PlayerTurnOver();
 }
 
 void ASTCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -242,6 +249,13 @@ float ASTCharacterBase::GetMaxMana() const
 		return 1.f;
 
 	return AttributeSet->GetMaxMana();
+}
+
+float ASTCharacterBase::GetSpeed() const
+{
+	if(!AttributeSet)
+		return 1.f;
+	return AttributeSet->GetSpeed();
 }
 
 bool ASTCharacterBase::SetCharacterLevel(int32 NewLevel)

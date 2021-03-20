@@ -17,6 +17,7 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
+	UPROPERTY(VisibleAnywhere)
 	bool bMyTurn;
 	
 };

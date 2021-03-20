@@ -17,10 +17,14 @@ ASTMainGameState::ASTMainGameState()
 
 void ASTMainGameState::Init()
 {
-	TurnManager = GetWorld()->SpawnActor<ASTTurnManager>(TurnManagerClass);
+	if(TurnManager == nullptr)
+	{
+		TurnManager = GetWorld()->SpawnActor<ASTTurnManager>(TurnManagerClass);
+	}
 	if(TurnManager != nullptr)
 	{
 		TurnManager->SetPlayerAnchorReference(PlayerAnchor);
+		CombatStartedDelegateM.AddUObject(TurnManager, &ASTTurnManager::CombatStarted);
 	}
 }
 
@@ -36,28 +40,24 @@ void ASTMainGameState::ReceivePlayer(ASTPlayerAnchor* InAnchor, APlayerControlle
 
 void ASTMainGameState::StartCombat(AActor* InAnchor)
 {
-	CombatStartedDelegateM.Broadcast();
-
+	if(InAnchor == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameState::StartCombat was called with invalid enemy anchor!"));
+		return;
+	}
 	EnemyAnchor = Cast<ASTAnchor>(InAnchor);
-	if(EnemyAnchor != nullptr)
-	{
-		EnemyController = Cast<ASTEnemyController>(EnemyAnchor->GetController());
-		
-		if(EnemyController != nullptr)
-		{
-			EnemyController->bMyTurn = false;
-		}
-	}
 
-	if(PlayerController != nullptr)
+	if(EnemyAnchor != nullptr && PlayerAnchor != nullptr)
 	{
-		PlayerController->bMyTurn = true;
+		TurnManager->SetPlayerAnchorReference(PlayerAnchor);
+		TurnManager->SetEnemyAnchorReference(EnemyAnchor);
+		CombatStartedDelegateM.Broadcast();
+		return;
 	}
-	
-	if(PlayerAnchor != nullptr)
-	{
-		PlayerAnchor->PartyActors[0]->bMyTurn = true;
-	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("Executed multicast delegate"));
+	UE_LOG(LogTemp, Warning, TEXT("GameState::StartCombat was called with invalid enemy or player anchor!"));
+}
+
+void ASTMainGameState::PlayerTurnOver()
+{
+	TurnManager->PlayerTurnOver();
 }

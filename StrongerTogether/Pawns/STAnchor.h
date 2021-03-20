@@ -34,6 +34,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<class ASTCharacterBase*> PartyActors;
+
+	FORCEINLINE const TArray<class ASTCharacterBase*>& GetParty() { return PartyActors; }
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	TArray<TSubclassOf<class ASTCharacterBase>> CharactersClasses;
@@ -47,7 +49,7 @@ public:
 #pragma endregion
 
 protected:
-	UFUNCTION()
+
 	void CombatStarted();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess))

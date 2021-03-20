@@ -37,6 +37,8 @@ public:
 	void ActivateAbilityByIndex(int32 Index);
 
 	void SetTarget(AActor* TargetActor);
+
+	virtual void TurnOver(class UGameplayAbility*);
 	
 	/** The component used to handle ability system interactions */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
@@ -72,6 +74,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Abilities")
 	TSubclassOf<class UGameplayEffect> InitialStats;
 
+	UPROPERTY(VisibleAnywhere)
 	bool bMyTurn;
 	
 #pragma region NonGAS
@@ -105,6 +108,10 @@ public:
 	/** Returns maximum mana, mana will never be greater than this */
 	UFUNCTION(BlueprintCallable)
     virtual float GetMaxMana() const;
+
+	/** Returns speed. Used to calculate place in turn order */
+	UFUNCTION(BlueprintCallable)
+	virtual float GetSpeed() const;
 
 	/** Modifies the character level, this may change abilities. Returns true on success */
 	UFUNCTION(BlueprintCallable)

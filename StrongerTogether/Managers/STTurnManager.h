@@ -20,13 +20,28 @@ class STRONGERTOGETHER_API ASTTurnManager : public AInfo
 
 public:
 
+	void CombatStarted();
+	void PlayerTurnOver();
 	
 	void SetPlayerAnchorReference(class ASTPlayerAnchor* InAnchor);
 	void SetEnemyAnchorReference(class ASTAnchor* EnemyAnchor);
 
 private:
+
+	void SetCombatOrder();
+	void SortCombatants();
+	void LogCombatants();
+	//void SortCombatants(const TArray<class ASTCharacterBase*>& UnsortedCombatants);
+
+	UPROPERTY()
+	TArray<class ASTCharacterBase*> SortedCombatants;
+
 	UPROPERTY()
 	class ASTPlayerAnchor* PlayerAnchor;
 	UPROPERTY()
 	class ASTAnchor* EnemyAnchor;
+	UPROPERTY()
+	class ASTEnemyController* EnemyController;
+	UPROPERTY()
+	class ASTPlayerController* PlayerController;
 };

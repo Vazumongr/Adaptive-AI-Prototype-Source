@@ -42,6 +42,8 @@ public:
 
 	void StartCombat(AActor* EnemyAnchor);
 
+	void PlayerTurnOver();
+
 	FCombatStartedM CombatStartedDelegateM;
 	
 private:
@@ -58,5 +60,9 @@ private:
 	class ASTPlayerController* PlayerController;
 	UPROPERTY()
 	class ASTEnemyController* EnemyController;
+
+public:
+	FORCEINLINE const class ASTAnchor* GetEnemyAnchor() { return EnemyAnchor; }
+	FORCEINLINE const class ASTPlayerAnchor* GetPlayerAnchor() { return PlayerAnchor; }
 	
 };
