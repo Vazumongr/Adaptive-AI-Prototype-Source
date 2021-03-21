@@ -20,8 +20,22 @@ void ASTTurnManager::Init()
 	UE_LOG(LogTemp, Warning, TEXT("I have been init"));
 }
 
+void ASTTurnManager::SetCharacterTurn(bool bTurnValue)
+{
+	SortedCombatants[TurnCounter]->bMyTurn = bTurnValue;
+	if(ASTPlayerController* PlayerController = Cast<ASTPlayerController>(SortedCombatants[TurnCounter]->GetOwningAnchor()->GetController()))
+	{
+		PlayerController->bMyTurn = bTurnValue;
+	}
+	else if(ASTEnemyController* EnemyController = Cast<ASTEnemyController>(SortedCombatants[TurnCounter]->GetOwningAnchor()->GetController()))
+	{
+		EnemyController->bMyTurn = bTurnValue;
+	}
+}
+
 void ASTTurnManager::CombatStarted()
 {
+	/*
 	if(EnemyAnchor != nullptr)
 	{
 		EnemyController = Cast<ASTEnemyController>(EnemyAnchor->GetController());
@@ -41,11 +55,22 @@ void ASTTurnManager::CombatStarted()
 	{
 		PlayerAnchor->PartyActors[0]->bMyTurn = true;
 	}
+	*/
 	SetCombatOrder();
+	TurnCounter = 0;
+	SetCharacterTurn(true);
+	
 }
 
 void ASTTurnManager::PlayerTurnOver()
 {
+	SetCharacterTurn(false);
+	if(++TurnCounter > (SortedCombatants.Num() - 1))
+	{
+		TurnCounter = 0;
+	}
+	SetCharacterTurn(true);
+	/*
 	if(PlayerController != nullptr)
 	{
 		PlayerController->bMyTurn = false;
@@ -67,6 +92,7 @@ void ASTTurnManager::PlayerTurnOver()
 			EnemyController->bMyTurn = true;
 		}
 	}
+	*/
 }
 
 void ASTTurnManager::SetPlayerAnchorReference(ASTPlayerAnchor* InAnchor)
@@ -110,21 +136,20 @@ void ASTTurnManager::SetCombatOrder()
 void ASTTurnManager::SortCombatants()
 {
 	int i, j;
-	float key;
+	ASTCharacterBase* key;
 	int n = sizeof(SortedCombatants) / sizeof(SortedCombatants[0]);
-	UE_LOG(LogTemp, Warning, TEXT("n is %i and Num() is %i"), n, SortedCombatants.Num());
-	UE_LOG(LogTemp, Warning, TEXT("sizeof(SortedCombatants) is %i and sizeof(SortedCombatants[0]) is %i"), sizeof(SortedCombatants), sizeof(SortedCombatants[2]));
-	for(i = 1; i < n; i++)
+	
+	for(i = 1; i < SortedCombatants.Num(); i++)
 	{
-		key = SortedCombatants[i]->GetSpeed();
+		key = SortedCombatants[i];
 		j = i - 1;
 
-		while(j >= 0 && SortedCombatants[j]->GetSpeed() > key)
+		while(j >= 0 && SortedCombatants[j]->GetSpeed() < key->GetSpeed())
 		{
 			SortedCombatants[j + 1] = SortedCombatants[j];
 			j = j - 1;
 		}
-		SortedCombatants[j + 1] = SortedCombatants[i];
+		SortedCombatants[j + 1] = key;
 	}
 }
 

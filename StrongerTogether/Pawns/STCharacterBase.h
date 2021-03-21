@@ -80,6 +80,7 @@ public:
 #pragma region NonGAS
 	
 	virtual void SetOwningAnchor(class ASTAnchor* InAnchor);
+	FORCEINLINE const class ASTAnchor* GetOwningAnchor() { return OwningAnchor; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;

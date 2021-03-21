@@ -14,6 +14,8 @@
 #include "StrongerTogether/Characters/STEnemyCharacter.h"
 #include "StrongerTogether/Widgets/STCharacterHUD.h"
 
+#include "StrongerTogether/GameStates/STMainGameState.h"
+
 void ASTPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
@@ -38,6 +40,11 @@ void ASTPlayerController::BeginPlay()
     AbilityIndex = -1;
 }
 
+void ASTPlayerController::TurnTest()
+{
+    Cast<ASTMainGameState>(GetWorld()->GetGameState())->PlayerTurnOver();
+}
+
 void ASTPlayerController::PrimeAbility(int32 Index)
 {
     if(SelectedCharacter == nullptr) return;
@@ -47,7 +54,6 @@ void ASTPlayerController::PrimeAbility(int32 Index)
 
 void ASTPlayerController::AdvanceCharacters()
 {
-
     if(ASTMainGameMode* GameMode = Cast<ASTMainGameMode>(GetWorld()->GetAuthGameMode()))
     {
         if(Counter > GameMode->PathPoints.Num() - 1 || Counter < 0) return;

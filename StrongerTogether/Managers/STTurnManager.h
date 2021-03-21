@@ -16,7 +16,7 @@ class STRONGERTOGETHER_API ASTTurnManager : public AInfo
 	virtual void BeginPlay() override;
 
 	void Init();
-	
+
 
 public:
 
@@ -31,17 +31,23 @@ private:
 	void SetCombatOrder();
 	void SortCombatants();
 	void LogCombatants();
+	void SetCharacterTurn(bool bTurnValue);
 	//void SortCombatants(const TArray<class ASTCharacterBase*>& UnsortedCombatants);
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess))
 	TArray<class ASTCharacterBase*> SortedCombatants;
+
+	UPROPERTY()
+	int8 TurnCounter;
 
 	UPROPERTY()
 	class ASTPlayerAnchor* PlayerAnchor;
 	UPROPERTY()
 	class ASTAnchor* EnemyAnchor;
+	/*
 	UPROPERTY()
 	class ASTEnemyController* EnemyController;
 	UPROPERTY()
 	class ASTPlayerController* PlayerController;
+	*/
 };

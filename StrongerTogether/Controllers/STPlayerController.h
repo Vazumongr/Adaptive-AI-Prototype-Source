@@ -35,6 +35,9 @@ class STRONGERTOGETHER_API ASTPlayerController : public APlayerController
 
 	virtual void BeginPlay() override;
 	
+	UFUNCTION(BlueprintCallable)
+    virtual void TurnTest();
+	
 public:
 
 	UFUNCTION(BlueprintCallable)
