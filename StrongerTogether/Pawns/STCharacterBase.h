@@ -32,6 +32,8 @@ public:
 	void AddStartupGameplayAbilities();
 
 	bool HandleTarget(AActor* TargetActor, int32 AbilityToActivate);
+
+	virtual void HealthChanged(const FOnAttributeChangeData& Data);
 	
 	UFUNCTION(BlueprintCallable)
 	void ActivateAbilityByIndex(int32 Index);
@@ -151,3 +153,11 @@ protected:
 	class USTActorWidgetComponent* ActorWidgetComponent;
 
 };
+
+inline void ASTCharacterBase::HealthChanged(const FOnAttributeChangeData& Data)
+{
+	if(Data.NewValue <= 0)
+	{
+		Destroy();
+	}
+}

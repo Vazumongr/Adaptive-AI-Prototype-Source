@@ -5,8 +5,10 @@
 #include "StrongerTogether/Pawns/STAnchor.h"
 #include "StrongerTogether/Pawns/STPlayerAnchor.h"
 #include "StrongerTogether/Pawns/STCharacterBase.h"
+#include "StrongerTogether/Characters/STEnemyCharacter.h"
 #include "StrongerTogether/Controllers/STEnemyController.h"
 #include "StrongerTogether/Controllers/STPlayerController.h"
+#include "StrongerTogether/Widgets/STCharacterHUD.h"
 
 void ASTTurnManager::BeginPlay()
 {
@@ -22,6 +24,7 @@ void ASTTurnManager::Init()
 
 void ASTTurnManager::SetCharacterTurn(bool bTurnValue)
 {
+	if(TurnCounter >= SortedCombatants.Num()) return;
 	SortedCombatants[TurnCounter]->bMyTurn = bTurnValue;
 	if(ASTPlayerController* PlayerController = Cast<ASTPlayerController>(SortedCombatants[TurnCounter]->GetOwningAnchor()->GetController()))
 	{
@@ -30,32 +33,15 @@ void ASTTurnManager::SetCharacterTurn(bool bTurnValue)
 	else if(ASTEnemyController* EnemyController = Cast<ASTEnemyController>(SortedCombatants[TurnCounter]->GetOwningAnchor()->GetController()))
 	{
 		EnemyController->bMyTurn = bTurnValue;
+		EnemyController->SelectedCharacter = Cast<ASTEnemyCharacter>(SortedCombatants[TurnCounter]);
+		EnemyController->BeginTurn(PlayerAnchor->PartyActors);
 	}
+	if(CharacterHUD != nullptr)
+		CharacterHUD->SetCharacterTurnText(SortedCombatants[TurnCounter]->Name);
 }
 
 void ASTTurnManager::CombatStarted()
 {
-	/*
-	if(EnemyAnchor != nullptr)
-	{
-		EnemyController = Cast<ASTEnemyController>(EnemyAnchor->GetController());
-		
-		if(EnemyController != nullptr)
-		{
-			EnemyController->bMyTurn = false;
-		}
-	}
-
-	if(PlayerController != nullptr)
-	{
-		PlayerController->bMyTurn = true;
-	}
-	
-	if(PlayerAnchor != nullptr)
-	{
-		PlayerAnchor->PartyActors[0]->bMyTurn = true;
-	}
-	*/
 	SetCombatOrder();
 	TurnCounter = 0;
 	SetCharacterTurn(true);
@@ -70,29 +56,6 @@ void ASTTurnManager::PlayerTurnOver()
 		TurnCounter = 0;
 	}
 	SetCharacterTurn(true);
-	/*
-	if(PlayerController != nullptr)
-	{
-		PlayerController->bMyTurn = false;
-	}
-	
-	if(PlayerAnchor != nullptr)
-	{
-		PlayerAnchor->PartyActors[0]->bMyTurn = false;
-	}
-
-	if(EnemyAnchor != nullptr)
-	{
-		EnemyController = Cast<ASTEnemyController>(EnemyAnchor->GetController());
-
-		EnemyAnchor->PartyActors[0]->bMyTurn = true;
-		
-		if(EnemyController != nullptr)
-		{
-			EnemyController->bMyTurn = true;
-		}
-	}
-	*/
 }
 
 void ASTTurnManager::SetPlayerAnchorReference(ASTPlayerAnchor* InAnchor)
@@ -109,6 +72,12 @@ void ASTTurnManager::SetEnemyAnchorReference(ASTAnchor* InAnchor)
 	{
 		EnemyAnchor = InAnchor;
 	}
+}
+
+void ASTTurnManager::SetCharacterHUDPtr(USTCharacterHUD* InHud)
+{
+	if(InHud != nullptr)
+		CharacterHUD = InHud;
 }
 
 void ASTTurnManager::SetCombatOrder()

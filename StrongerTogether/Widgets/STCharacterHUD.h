@@ -19,7 +19,9 @@ public:
 
 	void ClearHUD() const;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly);
+	void SetCharacterTurnText(const FName& CharName);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class ASTPlayerController* OwningController;
 
 protected:
@@ -48,6 +50,8 @@ protected:
 	class UTextBlock* HealthTextBlock;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* ManaTextBlock;;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* CharacterTurnTextBlock;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UBorder* AbilityOneBorder;

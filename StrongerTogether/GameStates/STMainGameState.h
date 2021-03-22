@@ -44,6 +44,8 @@ public:
 
 	void PlayerTurnOver();
 
+	FORCEINLINE class ASTTurnManager* GetTurnManager() { return TurnManager; }
+
 	FCombatStartedM CombatStartedDelegateM;
 	
 private:

@@ -33,6 +33,11 @@ void USTCharacterHUD::ClearHUD() const
     ManaTextBlock->SetText(FText::FromString(""));
 }
 
+void USTCharacterHUD::SetCharacterTurnText(const FName& CharName)
+{
+    CharacterTurnTextBlock->SetText(FText::FromName(CharName));
+}
+
 void USTCharacterHUD::UpdateOwnerAbilityIndexToZero() const
 {
     UpdateController(0);

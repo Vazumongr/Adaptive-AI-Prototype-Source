@@ -15,6 +15,7 @@
 #include "StrongerTogether/Widgets/STCharacterHUD.h"
 
 #include "StrongerTogether/GameStates/STMainGameState.h"
+#include "StrongerTogether/Managers/STTurnManager.h"
 
 void ASTPlayerController::SetupInputComponent()
 {
@@ -30,6 +31,11 @@ void ASTPlayerController::SetupHUD()
     CharacterHUD->OwningController = this;
     CharacterHUD->ClearHUD();
     bShowMouseCursor = true;
+
+    ASTMainGameState* GameState = Cast<ASTMainGameState>(GetWorld()->GetGameState());
+    ASTTurnManager* TurnManager = GameState->GetTurnManager();
+    TurnManager->SetCharacterHUDPtr(CharacterHUD);
+    
 }
 
 void ASTPlayerController::BeginPlay()

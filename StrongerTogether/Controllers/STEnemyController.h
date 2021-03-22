@@ -17,7 +17,13 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
+
+	void BeginTurn(const TArray<class ASTCharacterBase*>& PlayersCharacters);
+	
 	UPROPERTY(VisibleAnywhere)
 	bool bMyTurn;
+	
+	UPROPERTY(VisibleAnywhere)
+	class ASTEnemyCharacter* SelectedCharacter;
 	
 };

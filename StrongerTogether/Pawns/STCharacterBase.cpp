@@ -40,6 +40,7 @@ void ASTCharacterBase::BeginPlay()
 	Super::BeginPlay();
 	bMyTurn = false;
 	AbilitySystemComponent->AbilityCommittedCallbacks.AddUObject(this, &ASTCharacterBase::TurnOver);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetHealthAttribute()).AddUObject(this, &ASTCharacterBase::HealthChanged);
 	
 }
 

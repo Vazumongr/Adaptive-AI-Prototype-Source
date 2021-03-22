@@ -25,6 +25,7 @@ public:
 	
 	void SetPlayerAnchorReference(class ASTPlayerAnchor* InAnchor);
 	void SetEnemyAnchorReference(class ASTAnchor* EnemyAnchor);
+	void SetCharacterHUDPtr(class USTCharacterHUD* InHud);
 
 private:
 
@@ -38,16 +39,13 @@ private:
 	TArray<class ASTCharacterBase*> SortedCombatants;
 
 	UPROPERTY()
+	class USTCharacterHUD* CharacterHUD;
+
+	UPROPERTY()
 	int8 TurnCounter;
 
 	UPROPERTY()
 	class ASTPlayerAnchor* PlayerAnchor;
 	UPROPERTY()
 	class ASTAnchor* EnemyAnchor;
-	/*
-	UPROPERTY()
-	class ASTEnemyController* EnemyController;
-	UPROPERTY()
-	class ASTPlayerController* PlayerController;
-	*/
 };
