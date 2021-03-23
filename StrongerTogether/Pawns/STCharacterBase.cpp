@@ -44,6 +44,23 @@ void ASTCharacterBase::BeginPlay()
 	
 }
 
+void ASTCharacterBase::HealthChanged(const FOnAttributeChangeData& Data)
+{
+	if(Data.NewValue <= 0)
+	{
+		TArray<UObject*> References;
+		this->GetReferencedContentObjects(References);
+		for(UObject* Ref : References)
+		{
+			if(Ref)
+			{
+				UE_LOG(LogTemp,Warning,TEXT("%s"), *Ref->GetName());
+			}
+		}
+		Destroy();
+	}
+}
+
 void ASTCharacterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -234,6 +251,14 @@ float ASTCharacterBase::GetMaxHealth() const
 		return 1.f;
 
 	return AttributeSet->GetMaxHealth();
+}
+
+float ASTCharacterBase::GetHealthPercent() const
+{
+	if(!AttributeSet)
+		return 1.f;
+
+	return AttributeSet->GetHealth() / AttributeSet->GetMaxHealth();
 }
 
 float ASTCharacterBase::GetMana() const

@@ -15,13 +15,20 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
+	
+	class ASTCharacterBase* FindLowestHealthValueTarget();
+	class ASTCharacterBase* FindLowestHealthPercentageTarget();
+
+	UPROPERTY()
+	TArray<class ASTCharacterBase*> PlayersCharacters;
 
 public:
 
-	void BeginTurn(const TArray<class ASTCharacterBase*>& PlayersCharacters);
+	void BeginTurn(const TArray<class ASTCharacterBase*> InPlayersCharacters);
 	
 	UPROPERTY(VisibleAnywhere)
 	bool bMyTurn;
+
 	
 	UPROPERTY(VisibleAnywhere)
 	class ASTEnemyCharacter* SelectedCharacter;

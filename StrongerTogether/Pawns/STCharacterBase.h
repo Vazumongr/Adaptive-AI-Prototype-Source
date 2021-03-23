@@ -104,6 +104,10 @@ public:
 	UFUNCTION(BlueprintCallable)
     virtual float GetMaxHealth() const;
 
+	/** Returns maximum health, health will never be greater than this */
+	UFUNCTION(BlueprintCallable)
+    virtual float GetHealthPercent() const;
+
 	/** Returns current mana */
 	UFUNCTION(BlueprintCallable)
     virtual float GetMana() const;
@@ -153,11 +157,3 @@ protected:
 	class USTActorWidgetComponent* ActorWidgetComponent;
 
 };
-
-inline void ASTCharacterBase::HealthChanged(const FOnAttributeChangeData& Data)
-{
-	if(Data.NewValue <= 0)
-	{
-		Destroy();
-	}
-}

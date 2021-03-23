@@ -43,7 +43,6 @@ void ASTPlayerAnchor::SpawnPartyCharacter()
 	ArrangeParty();
 }
 
-
 void ASTPlayerAnchor::Advance()
 {
 	bIsMoving = true;

@@ -12,13 +12,53 @@ void ASTEnemyController::BeginPlay()
 
 void ASTEnemyController::Tick(float DeltaSeconds)
 {
-	if(bMyTurn) UE_LOG(LogTemp, Warning, TEXT("Enemies turn"));
+	Super::Tick(DeltaSeconds);
 }
 
-void ASTEnemyController::BeginTurn(const TArray<class ASTCharacterBase*>& PlayersCharacters)
+ASTCharacterBase* ASTEnemyController::FindLowestHealthValueTarget()
 {
-	UE_LOG(LogTemp, Warning,TEXT("Enemy controlling beginning turn. Selected character is %s"), *SelectedCharacter->Name.ToString());
+	int32 LowestHealthIndex = {0};
+	for(int32 i = 0; i < PlayersCharacters.Num(); i++)
+	{
+		if(PlayersCharacters[i]->GetHealth() < PlayersCharacters[LowestHealthIndex]->GetHealth())
+		{
+			LowestHealthIndex = i;
+		}
+	}
+	return PlayersCharacters[LowestHealthIndex];
+}
+
+ASTCharacterBase* ASTEnemyController::FindLowestHealthPercentageTarget()
+{
+	int32 LowestHealthIndex = {0};
+	for(int32 i = 0; i < PlayersCharacters.Num(); i++)
+	{
+		if(PlayersCharacters[i]->GetHealthPercent() < PlayersCharacters[LowestHealthIndex]->GetHealthPercent())
+		{
+			LowestHealthIndex = i;
+		}
+	}
+	return PlayersCharacters[LowestHealthIndex];
+}
+
+void ASTEnemyController::BeginTurn(const TArray<class ASTCharacterBase*> InPlayersCharacters)
+{
+	PlayersCharacters = InPlayersCharacters;
+	
+	UE_LOG(LogTemp, Warning,TEXT("Enemy controller %s beginning turn."), *GetName());
+	
 	float CharIndex = FMath::RandRange(0, PlayersCharacters.Num() -1);
-	UE_LOG(LogTemp, Warning, TEXT("I am targetting %s at random"), *PlayersCharacters[CharIndex]->Name.ToString());
-	SelectedCharacter->HandleTarget(PlayersCharacters[CharIndex], 0);
+
+	UE_LOG(LogTemp, Warning, TEXT("ECHO ||||| %i"), PlayersCharacters.Num());
+	for(ASTCharacterBase* Char : PlayersCharacters)
+	{
+		if(Char == nullptr)
+			UE_LOG(LogTemp, Warning, TEXT("NULL ||||| %s"), *Char->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("ECHO ||||| %s"), *Char->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("%f"), Char->GetHealth());
+		UE_LOG(LogTemp, Warning, TEXT("%s"), Char->IsPendingKillOrUnreachable() ? TEXT("true") : TEXT("false"));
+		
+	}
+	
+	SelectedCharacter->HandleTarget(FindLowestHealthValueTarget(), 0);
 }
