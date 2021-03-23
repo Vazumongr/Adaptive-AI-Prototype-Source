@@ -25,8 +25,16 @@ void ASTTurnManager::Init()
 void ASTTurnManager::SetCharacterTurn(bool bTurnValue)
 {
 	if(TurnCounter >= SortedCombatants.Num()) return;
-	if(SortedCombatants[TurnCounter] == nullptr)
-		UE_LOG(LogTemp, Warning, TEXT("NULL |||||"));
+
+	if(!IsValid(SortedCombatants[TurnCounter]))
+	{
+		SortedCombatants.RemoveAt(TurnCounter);
+		if(TurnCounter >= SortedCombatants.Num())
+		{
+			TurnCounter = 0;
+		}
+	}
+	
 	SortedCombatants[TurnCounter]->bMyTurn = bTurnValue;
 	if(ASTPlayerController* PlayerController = Cast<ASTPlayerController>(SortedCombatants[TurnCounter]->GetOwningAnchor()->GetController()))
 	{

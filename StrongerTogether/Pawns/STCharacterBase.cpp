@@ -48,15 +48,7 @@ void ASTCharacterBase::HealthChanged(const FOnAttributeChangeData& Data)
 {
 	if(Data.NewValue <= 0)
 	{
-		TArray<UObject*> References;
-		this->GetReferencedContentObjects(References);
-		for(UObject* Ref : References)
-		{
-			if(Ref)
-			{
-				UE_LOG(LogTemp,Warning,TEXT("%s"), *Ref->GetName());
-			}
-		}
+		OwningAnchor->RemovePartyCharacter(this);
 		Destroy();
 	}
 }

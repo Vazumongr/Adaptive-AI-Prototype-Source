@@ -44,7 +44,7 @@ ASTCharacterBase* ASTEnemyController::FindLowestHealthPercentageTarget()
 void ASTEnemyController::BeginTurn(const TArray<class ASTCharacterBase*> InPlayersCharacters)
 {
 	PlayersCharacters = InPlayersCharacters;
-	
+	/*
 	UE_LOG(LogTemp, Warning,TEXT("Enemy controller %s beginning turn."), *GetName());
 	
 	float CharIndex = FMath::RandRange(0, PlayersCharacters.Num() -1);
@@ -52,13 +52,13 @@ void ASTEnemyController::BeginTurn(const TArray<class ASTCharacterBase*> InPlaye
 	UE_LOG(LogTemp, Warning, TEXT("ECHO ||||| %i"), PlayersCharacters.Num());
 	for(ASTCharacterBase* Char : PlayersCharacters)
 	{
-		if(Char == nullptr)
-			UE_LOG(LogTemp, Warning, TEXT("NULL ||||| %s"), *Char->GetName());
+		if(!IsValid(Char))
+			UE_LOG(LogTemp, Warning, TEXT("CHAR NOT VALID ||||| %s"), *Char->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("ECHO ||||| %s"), *Char->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("%f"), Char->GetHealth());
-		UE_LOG(LogTemp, Warning, TEXT("%s"), Char->IsPendingKillOrUnreachable() ? TEXT("true") : TEXT("false"));
+		UE_LOG(LogTemp, Warning, TEXT("%s"), Char->IsPendingKill() ? TEXT("true") : TEXT("false"));
 		
 	}
-	
+	*/
 	SelectedCharacter->HandleTarget(FindLowestHealthValueTarget(), 0);
 }
