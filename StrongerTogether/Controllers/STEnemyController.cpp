@@ -15,6 +15,18 @@ void ASTEnemyController::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
+void ASTEnemyController::PickTarget()
+{
+	ASTCharacterBase* LowestHealthTarget = FindLowestHealthValueTarget();
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([this, LowestHealthTarget]
+	{
+		SelectedCharacter->HandleTarget(LowestHealthTarget, 0);
+	});
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 1.f, false);
+}
+
 ASTCharacterBase* ASTEnemyController::FindLowestHealthValueTarget()
 {
 	int32 LowestHealthIndex = {0};
@@ -44,21 +56,6 @@ ASTCharacterBase* ASTEnemyController::FindLowestHealthPercentageTarget()
 void ASTEnemyController::BeginTurn(const TArray<class ASTCharacterBase*> InPlayersCharacters)
 {
 	PlayersCharacters = InPlayersCharacters;
-	/*
-	UE_LOG(LogTemp, Warning,TEXT("Enemy controller %s beginning turn."), *GetName());
-	
-	float CharIndex = FMath::RandRange(0, PlayersCharacters.Num() -1);
 
-	UE_LOG(LogTemp, Warning, TEXT("ECHO ||||| %i"), PlayersCharacters.Num());
-	for(ASTCharacterBase* Char : PlayersCharacters)
-	{
-		if(!IsValid(Char))
-			UE_LOG(LogTemp, Warning, TEXT("CHAR NOT VALID ||||| %s"), *Char->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("ECHO ||||| %s"), *Char->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("%f"), Char->GetHealth());
-		UE_LOG(LogTemp, Warning, TEXT("%s"), Char->IsPendingKill() ? TEXT("true") : TEXT("false"));
-		
-	}
-	*/
-	SelectedCharacter->HandleTarget(FindLowestHealthValueTarget(), 0);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ASTEnemyController::PickTarget, 1.0f, false);
 }

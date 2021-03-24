@@ -41,7 +41,6 @@ void ASTPartyCharacter::HandleTarget2(AActor* TargetActor, int32 AbilityIndexToA
 		{
 			UE_LOG(LogTemp, Error, TEXT("That ability is out of bounds!"));
 		}
-		UE_LOG(LogTemp, Warning, TEXT("You are telling me to use ability %i on target %s"), AbilityIndexToActivate, *TargetActor->GetName());
 
 		// Check tags on ability
 		FGameplayAbilitySpecHandle& AbilityToActivate = AbilitySpecHandles[AbilityIndexToActivate];

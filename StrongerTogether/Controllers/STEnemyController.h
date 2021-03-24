@@ -15,12 +15,18 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaSeconds) override;
+
+	void PickTarget();
+	void PickAbility();
+	void AttackTargetWithAbility();
 	
 	class ASTCharacterBase* FindLowestHealthValueTarget();
 	class ASTCharacterBase* FindLowestHealthPercentageTarget();
 
 	UPROPERTY()
 	TArray<class ASTCharacterBase*> PlayersCharacters;
+
+	FTimerHandle TimerHandle;
 
 public:
 

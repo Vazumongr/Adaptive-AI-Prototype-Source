@@ -48,7 +48,7 @@ void ASTCharacterBase::HealthChanged(const FOnAttributeChangeData& Data)
 {
 	if(Data.NewValue <= 0)
 	{
-		OwningAnchor->RemovePartyCharacter(this);
+		OwningAnchor->PartyMemberDied(this);
 		Destroy();
 	}
 }
@@ -155,7 +155,6 @@ void ASTCharacterBase::AddStartupGameplayAbilities()
 		FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(InitialStats, 1, EffectContext);
 		if (NewHandle.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Handle valid"));
 			FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*NewHandle.Data.Get());
 		}
 	}
@@ -179,7 +178,6 @@ bool ASTCharacterBase::HandleTarget(AActor* TargetActor, int32 AbilityIndexToAct
 			UE_LOG(LogTemp, Error, TEXT("That ability is out of bounds!"));
 			return false;
 		}
-		UE_LOG(LogTemp, Warning, TEXT("You are telling me to use ability %i on target %s"), AbilityIndexToActivate, *TargetActor->GetName());
 
 		// Check tags on ability
 		FGameplayAbilitySpecHandle& AbilityToActivate = AbilitySpecHandles[AbilityIndexToActivate];
@@ -212,7 +210,6 @@ void ASTCharacterBase::ActivateAbilityByIndex(int32 Index)
 {
 	if(AbilitySystemComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%f"), AbilitySpecHandles.Num());
 		if(Index < AbilitySpecHandles.Num() && Index > -1)
 		{
 			AbilitySystemComponent->TryActivateAbility(AbilitySpecHandles[Index]);

@@ -6,24 +6,8 @@
 #include "GameFramework/GameStateBase.h"
 #include "STMainGameState.generated.h"
 
-UDELEGATE()
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCombatStartedDM);
-
-UDELEGATE()
-DECLARE_DYNAMIC_DELEGATE(FCombatStartedD);
-
 DECLARE_MULTICAST_DELEGATE(FCombatStartedM);
-
-DECLARE_DELEGATE(FCombatStarted);
-
-UENUM()
-enum class EDelegate : uint8
-{
-	FCombatStartedDM,
-	FCombatStartedD,
-	FCombatStartedM,
-	FCombatStarted
-};
+DECLARE_MULTICAST_DELEGATE(FCombatEndedM);
 
 /**
  * 
@@ -41,12 +25,14 @@ public:
 	void ReceivePlayer(class ASTPlayerAnchor* InAnchor, class APlayerController* InPlayerController);
 
 	void StartCombat(AActor* EnemyAnchor);
+	void EndCombat(AActor* InAnchor);
 
 	void PlayerTurnOver();
 
 	FORCEINLINE class ASTTurnManager* GetTurnManager() { return TurnManager; }
 
 	FCombatStartedM CombatStartedDelegateM;
+	FCombatEndedM CombatEndedDelegateM;
 	
 private:
 	UPROPERTY()

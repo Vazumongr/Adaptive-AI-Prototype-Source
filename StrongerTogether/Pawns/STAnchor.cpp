@@ -26,9 +26,22 @@ void ASTAnchor::BeginPlay()
 	GameState = Cast<ASTMainGameState>(GetWorld()->GetGameState());
 	if(GameState != nullptr)
 	{
-		GameState->CombatStartedDelegateM.AddUObject(this, &ASTAnchor::CombatStarted);
+		GameState->CombatStartedDelegateM.AddUObject(this, &ASTAnchor::CombatStarted);GameState->CombatEndedDelegateM.AddUObject(this, &ASTAnchor::CombatEnded);
 	}
 	bInCombat = false;
+}
+
+void ASTAnchor::PartyMemberDied(ASTCharacterBase* InActor)
+{
+	if(InActor != nullptr)
+	{
+		RemovePartyCharacter(InActor);
+	}
+	if(PartyActors.Num() == 0)
+	{
+		GameState->EndCombat(this);
+		Destroy();
+	}
 }
 
 void ASTAnchor::SpawnPartyCharacter()
@@ -59,18 +72,11 @@ void ASTAnchor::ArrangeParty()
 		if(PartyActors.Num()%2 == 0)
 		{
 			FVector NewLocation = GetActorLocation();
-			UE_LOG(LogTemp, Warning, TEXT("New Location: %s"), *NewLocation.ToString());
-
-			UE_LOG(LogTemp, Warning, TEXT("NewLocation.Y = %f * %d * %d"), PartyOffset, (uint8)OffsetMultiplyer, Flip);
 			NewLocation.Y += PartyOffset * (uint8)OffsetMultiplyer * Flip;
-			UE_LOG(LogTemp, Warning, TEXT("New Location.Y: %f"), NewLocation.Y);
 			OffsetMultiplyer += .5f;
-			UE_LOG(LogTemp, Warning, TEXT("OffsetMultiplyer: %f"), OffsetMultiplyer);
 			Flip *= -1;
 			NewLocation = NewLocation - GetActorLocation();
-			UE_LOG(LogTemp, Warning, TEXT("Final New Location(relative): %s"), *NewLocation.ToString());
 			Actor->SetActorRelativeLocation(NewLocation);
-			UE_LOG(LogTemp, Warning, TEXT("================LINE PURGE==============="));
 		}
 	}
 }
@@ -87,7 +93,11 @@ void ASTAnchor::RemovePartyCharacter(class ASTCharacterBase* InActor)
 
 void ASTAnchor::CombatStarted()
 {
-	UE_LOG(LogTemp, Warning, TEXT("CombatStarted!"));
 	bInCombat = true;
+}
+
+void ASTAnchor::CombatEnded()
+{
+	bInCombat = false;
 }
 

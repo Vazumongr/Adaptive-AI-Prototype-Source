@@ -25,6 +25,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void PartyMemberDied(class ASTCharacterBase* InActor);
+
 	void AddPartyCharacter(class ASTCharacterBase* InActor);
 	void RemovePartyCharacter(class ASTCharacterBase* InActor);
 	
@@ -51,6 +53,7 @@ public:
 protected:
 
 	void CombatStarted();
+	void CombatEnded();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	class UBoxComponent* BoxCollider;

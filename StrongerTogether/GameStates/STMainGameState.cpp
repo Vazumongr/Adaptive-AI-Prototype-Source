@@ -34,7 +34,6 @@ void ASTMainGameState::ReceivePlayer(ASTPlayerAnchor* InAnchor, APlayerControlle
 	{
 		PlayerAnchor = InAnchor;
 		PlayerController = Cast<ASTPlayerController>(InPlayerController);
-		UE_LOG(LogTemp, Warning, TEXT("I have received the player anchor"));
 	}
 }
 
@@ -55,6 +54,14 @@ void ASTMainGameState::StartCombat(AActor* InAnchor)
 		return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("GameState::StartCombat was called with invalid enemy or player anchor!"));
+}
+
+void ASTMainGameState::EndCombat(AActor* InAnchor)
+{
+	if(InAnchor != nullptr)
+	{
+		CombatEndedDelegateM.Broadcast();
+	}
 }
 
 void ASTMainGameState::PlayerTurnOver()

@@ -20,7 +20,6 @@ void ASTPlayerAnchor::Tick(float DeltaSeconds)
 		FVector NewLocation = GetActorLocation();
 		NewLocation.Y += MovementThisFrame;
 		SetActorLocation(NewLocation);
-		UE_LOG(LogTemp, Warning, TEXT(" i defintely should be moving. New location is: %s"), *NewLocation.ToString());
 	}
 }
 
@@ -45,6 +44,7 @@ void ASTPlayerAnchor::SpawnPartyCharacter()
 
 void ASTPlayerAnchor::Advance()
 {
+	if(bInCombat) return;
 	bIsMoving = true;
 	AnchorMoving.Broadcast();
 }
@@ -52,7 +52,6 @@ void ASTPlayerAnchor::Advance()
 void ASTPlayerAnchor::ComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
      bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Overlapping"));
 	if(ASTAnchor* EnemyAnchor = Cast<ASTAnchor>(OtherActor))
 	{
 		bIsMoving = false;
