@@ -47,7 +47,7 @@ public:
 	
 	
 protected:
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintNativeEvent)
     void UpdateCharacterHUD();
 	
 	UFUNCTION(BlueprintCallable)

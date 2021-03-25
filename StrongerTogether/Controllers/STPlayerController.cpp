@@ -58,6 +58,11 @@ void ASTPlayerController::PrimeAbility(int32 Index)
     PlayersCombatState = ECombatState::AbilityPrimed;
 }
 
+void ASTPlayerController::UpdateCharacterHUD_Implementation()
+{
+    CharacterHUD->Update(SelectedCharacter);
+}
+
 void ASTPlayerController::AdvanceCharacters()
 {
     if(ASTMainGameMode* GameMode = Cast<ASTMainGameMode>(GetWorld()->GetAuthGameMode()))

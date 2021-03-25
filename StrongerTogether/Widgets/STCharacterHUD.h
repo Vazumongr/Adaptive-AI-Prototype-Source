@@ -23,6 +23,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class ASTPlayerController* OwningController;
+	
+	UFUNCTION(BlueprintCallable)
+	void Update(class ASTPartyCharacter* InActor);
 
 protected:
 
@@ -34,9 +37,6 @@ protected:
 	void UpdateOwnerAbilityIndexToOne() const;
 	UFUNCTION()
 	void UpdateOwnerAbilityIndexToTwo() const;
-	
-	UFUNCTION(BlueprintCallable)
-	void Update(class ASTPartyCharacter* InActor);
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* CharacterNameTextBlock;
