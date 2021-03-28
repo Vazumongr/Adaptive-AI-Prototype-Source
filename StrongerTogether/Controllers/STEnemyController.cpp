@@ -3,6 +3,7 @@
 #include "STEnemyController.h"
 
 #include "StrongerTogether/Characters/STEnemyCharacter.h"
+#include "StrongerTogether/Characters/STPartyCharacter.h"
 #include "StrongerTogether/GameModes/STMainGameMode.h"
 #include "StrongerTogether/GameStates/STMainGameState.h"
 #include "StrongerTogether/Managers/STTurnManager.h"
@@ -20,7 +21,7 @@ void ASTEnemyController::Tick(float DeltaSeconds)
 
 void ASTEnemyController::PickTarget()
 {
-	ASTCharacterBase* LowestHealthTarget = FindLowestHealthPercentageTarget();
+	ASTCharacterBase* LowestHealthTarget = FindKillableTarget();
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([this, LowestHealthTarget]
 	{
@@ -67,16 +68,23 @@ ASTCharacterBase* ASTEnemyController::FindLowestHealthPercentageTarget()
 
 ASTCharacterBase* ASTEnemyController::FindKillableTarget()
 {
-	const float DamageAmount = SelectedCharacter->GetDamageAbility();
+	const float DamageAmount = FMath::Abs(SelectedCharacter->GetDamageAbility());
 	TArray<ASTCharacterBase*> KillableTargets;
 	const int32 LowestHealthIndex {0};
 	
 	for(int32 i = 0; i < PlayersCharacters.Num(); i++)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("HP: %f"), PlayersCharacters[i]->GetHealth());
 		if(PlayersCharacters[i]->GetHealth() <= DamageAmount)
 		{
 			KillableTargets.Add(PlayersCharacters[i]);
+			UE_LOG(LogTemp, Warning, TEXT("Adding Killable Target"));
 		}
+	}
+	if(KillableTargets.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No killable targets"));
+		return FindLowestHealthValueTarget();
 	}
 
 	ASTMainGameState* GameState = Cast<ASTMainGameState>(GetWorld()->GetGameState());
@@ -93,13 +101,21 @@ ASTCharacterBase* ASTEnemyController::FindKillableTarget()
 
 	TArray<ASTCharacterBase*> TurnOrder;
 	int32 Idx;
+	TurnManager->GetTurnOrder(TurnOrder, Idx);
+	int32 i = Idx;
+	do
+	{
+		if(KillableTargets.Contains(TurnOrder[i]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Found killable target"));
+			return TurnOrder[i];
+		}
+		if(++i >= TurnOrder.Num())
+		{
+			i = 0;
+		}
+	}while(i != Idx);
 	
-	TurnManager->GetTurnOrder(TurnOrder, Idx);
-	UE_LOG(LogTemp, Warning, TEXT("First Fetch: %s"), *TurnOrder[0]->GetName());
-	TurnOrder.RemoveAt(0);
-	UE_LOG(LogTemp, Warning, TEXT("First Removal: %s"), *TurnOrder[0]->GetName());
-	TurnManager->GetTurnOrder(TurnOrder, Idx);
-	UE_LOG(LogTemp, Warning, TEXT("Second Fetch: %s"), *TurnOrder[0]->GetName());
 	
 	
 	return PlayersCharacters[LowestHealthIndex];
@@ -109,7 +125,6 @@ void ASTEnemyController::BeginTurn(const TArray<class ASTCharacterBase*> InPlaye
 {
 	PlayersCharacters = InPlayersCharacters;
 
-	FindKillableTarget();
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ASTEnemyController::PickTarget, 1.0f, false);
 	GEngine->AddOnScreenDebugMessage(-1,1.f,FColor::Red, FString("Picking Target..."));
 }

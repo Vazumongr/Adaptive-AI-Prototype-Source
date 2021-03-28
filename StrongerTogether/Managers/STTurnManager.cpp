@@ -112,7 +112,6 @@ void ASTTurnManager::SetCombatOrder()
 	SortedCombatants.Empty();
 	SortedCombatants.Append(PlayerAnchor->GetParty());
 	SortedCombatants.Append(EnemyAnchor->GetParty());
-	LogCombatants();
 	SortCombatants();
 	LogCombatants();
 	
