@@ -22,6 +22,8 @@ public:
 
 	void CombatStarted();
 	void PlayerTurnOver();
+
+	void GetTurnOrder(TArray<class ASTCharacterBase*>& TurnOrder, int32& Idx) const;
 	
 	void SetPlayerAnchorReference(class ASTPlayerAnchor* InAnchor);
 	void SetEnemyAnchorReference(class ASTAnchor* EnemyAnchor);

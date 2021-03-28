@@ -7,36 +7,36 @@
 
 USTGameplayAbility::USTGameplayAbility() {}
 
-bool USTGameplayAbility::GetDamagingEffect()
+float USTGameplayAbility::GetDamagingEffect(ASTCharacterBase* OwningCharacter)
 {
 	FGameplayEffectContextHandle Handle;
-	AActor* OwningActor = GetOwningActorFromActorInfo();
-	ASTCharacterBase* OwningCharacter = Cast<ASTCharacterBase>(OwningActor);
+
 	if(OwningCharacter == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Owning Character is NULL"));
-		return false;
+		return 0;
 	}
+	
 	UAbilitySystemComponent* OwningASC = OwningCharacter->AbilitySystemComponent;
 	if(OwningASC == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Owning ASC is NULL"));
-		return false;
+		return 0;
 	}
+	
 	FGameplayEffectSpecHandle SpecHandle = OwningASC->MakeOutgoingSpec(GameplayEffects[0], 1, Handle);	// requires damage effect in slot 0
 	if(SpecHandle.Data == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SpecHandle.Data is NULL"));
-		return false;
+		return 0;
 	}
-	FGameplayEffectModifiedAttribute* ModifiedAttribute = SpecHandle.Data->GetModifiedAttribute(OwningCharacter->AttributeSet->GetHealthAttribute());
-	if(ModifiedAttribute == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Modified Attribute is NULL"));
-		return false;
-	}
-	const float DamageAmount = ModifiedAttribute->TotalMagnitude;
+	
+	SpecHandle.Data->CalculateModifierMagnitudes();
+	
+	const float DamageAmount = SpecHandle.Data->GetModifierMagnitude(0,true);
+	
 	UE_LOG(LogTemp, Warning, TEXT("Character has damaging ability dealing %f damage!"), DamageAmount);
-	return true;
+	
+	return DamageAmount;
 }
 

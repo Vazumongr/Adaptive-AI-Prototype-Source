@@ -3,6 +3,9 @@
 #include "STEnemyController.h"
 
 #include "StrongerTogether/Characters/STEnemyCharacter.h"
+#include "StrongerTogether/GameModes/STMainGameMode.h"
+#include "StrongerTogether/GameStates/STMainGameState.h"
+#include "StrongerTogether/Managers/STTurnManager.h"
 
 void ASTEnemyController::BeginPlay()
 {
@@ -64,8 +67,41 @@ ASTCharacterBase* ASTEnemyController::FindLowestHealthPercentageTarget()
 
 ASTCharacterBase* ASTEnemyController::FindKillableTarget()
 {
-	SelectedCharacter->GetDamageAbility();
+	const float DamageAmount = SelectedCharacter->GetDamageAbility();
+	TArray<ASTCharacterBase*> KillableTargets;
 	const int32 LowestHealthIndex {0};
+	
+	for(int32 i = 0; i < PlayersCharacters.Num(); i++)
+	{
+		if(PlayersCharacters[i]->GetHealth() <= DamageAmount)
+		{
+			KillableTargets.Add(PlayersCharacters[i]);
+		}
+	}
+
+	ASTMainGameState* GameState = Cast<ASTMainGameState>(GetWorld()->GetGameState());
+	if(GameState == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameState is nullptr"));
+		return nullptr;
+	}
+	ASTTurnManager* TurnManager = GameState->GetTurnManager();
+	if(TurnManager == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TurnManager is nullptr"));
+	}
+
+	TArray<ASTCharacterBase*> TurnOrder;
+	int32 Idx;
+	
+	TurnManager->GetTurnOrder(TurnOrder, Idx);
+	UE_LOG(LogTemp, Warning, TEXT("First Fetch: %s"), *TurnOrder[0]->GetName());
+	TurnOrder.RemoveAt(0);
+	UE_LOG(LogTemp, Warning, TEXT("First Removal: %s"), *TurnOrder[0]->GetName());
+	TurnManager->GetTurnOrder(TurnOrder, Idx);
+	UE_LOG(LogTemp, Warning, TEXT("Second Fetch: %s"), *TurnOrder[0]->GetName());
+	
+	
 	return PlayersCharacters[LowestHealthIndex];
 }
 

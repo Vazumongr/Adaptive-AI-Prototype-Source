@@ -68,6 +68,12 @@ void ASTTurnManager::PlayerTurnOver()
 	SetCharacterTurn(true);
 }
 
+void ASTTurnManager::GetTurnOrder(TArray<ASTCharacterBase*>& TurnOrder, int32& Idx) const
+{
+	TurnOrder = SortedCombatants;
+	Idx = TurnCounter;
+}
+
 void ASTTurnManager::SetPlayerAnchorReference(ASTPlayerAnchor* InAnchor)
 {
 	if(InAnchor != nullptr)

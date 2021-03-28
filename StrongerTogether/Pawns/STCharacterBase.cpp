@@ -206,12 +206,12 @@ bool ASTCharacterBase::HandleTarget(AActor* TargetActor, int32 AbilityIndexToAct
 	return true;
 }
 
-void ASTCharacterBase::GetDamageAbility()
+float ASTCharacterBase::GetDamageAbility()
 {
-	FGameplayAbilitySpecHandle& AbilityToActivate = AbilitySpecHandles[0];	//damage ability must me in slot 0
+	FGameplayAbilitySpecHandle& AbilityToActivate = AbilitySpecHandles[0];	//damage ability must be in slot 0
 	UGameplayAbility* AbilityBeingActivated = AbilitySystemComponent->FindAbilitySpecFromHandle(AbilityToActivate)->Ability;
 	USTGameplayAbility* STAbility = Cast<USTGameplayAbility>(AbilityBeingActivated);
-	STAbility->GetDamagingEffect();
+	return STAbility->GetDamagingEffect(this);
 }
 
 void ASTCharacterBase::ActivateAbilityByIndex(int32 Index)
@@ -222,7 +222,6 @@ void ASTCharacterBase::ActivateAbilityByIndex(int32 Index)
 		{
 			AbilitySystemComponent->TryActivateAbility(AbilitySpecHandles[Index]);
 		}
-		
 	}
 }
 

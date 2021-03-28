@@ -35,7 +35,7 @@ public:
 
 	bool HandleTarget(AActor* TargetActor, int32 AbilityToActivate);
 
-	void GetDamageAbility();
+	float GetDamageAbility();
 
 	virtual void HealthChanged(const FOnAttributeChangeData& Data);
 	

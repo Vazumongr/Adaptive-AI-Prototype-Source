@@ -21,7 +21,7 @@ class STRONGERTOGETHER_API USTGameplayAbility : public UGameplayAbility
     // Constructor and overrides
     USTGameplayAbility();
 
-    bool GetDamagingEffect();
+    float GetDamagingEffect(class ASTCharacterBase* OwningCharacter);
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Abilities")
     TArray<TSubclassOf<class UGameplayEffect>> GameplayEffects;
