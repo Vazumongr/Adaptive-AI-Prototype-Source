@@ -206,6 +206,14 @@ bool ASTCharacterBase::HandleTarget(AActor* TargetActor, int32 AbilityIndexToAct
 	return true;
 }
 
+void ASTCharacterBase::GetDamageAbility()
+{
+	FGameplayAbilitySpecHandle& AbilityToActivate = AbilitySpecHandles[0];	//damage ability must me in slot 0
+	UGameplayAbility* AbilityBeingActivated = AbilitySystemComponent->FindAbilitySpecFromHandle(AbilityToActivate)->Ability;
+	USTGameplayAbility* STAbility = Cast<USTGameplayAbility>(AbilityBeingActivated);
+	STAbility->GetDamagingEffect();
+}
+
 void ASTCharacterBase::ActivateAbilityByIndex(int32 Index)
 {
 	if(AbilitySystemComponent)

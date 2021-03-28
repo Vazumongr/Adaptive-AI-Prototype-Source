@@ -10,6 +10,8 @@
 
 #include "STCharacterBase.generated.h"
 
+DECLARE_DELEGATE(FHealthChangedDelegate);
+
 UCLASS()
 class STRONGERTOGETHER_API ASTCharacterBase : public APawn, public IAbilitySystemInterface
 {
@@ -33,6 +35,8 @@ public:
 
 	bool HandleTarget(AActor* TargetActor, int32 AbilityToActivate);
 
+	void GetDamageAbility();
+
 	virtual void HealthChanged(const FOnAttributeChangeData& Data);
 	
 	UFUNCTION(BlueprintCallable)
@@ -53,10 +57,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
 	USTAttributeSet* AttributeSet;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float HealthValue;
-
 	bool bAbilitiesInitialized = false;
+
+	FHealthChangedDelegate HealthChangedDelegate;
 
 	UPROPERTY(EditAnywhere, Replicated, Category = "Abilities")
 	int32 CharacterLevel;

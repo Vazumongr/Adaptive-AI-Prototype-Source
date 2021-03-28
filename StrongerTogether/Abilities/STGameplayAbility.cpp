@@ -2,72 +2,41 @@
 
 #include "StrongerTogether/Abilities/STGameplayAbility.h"
 
+#include "StrongerTogether/Pawns/STCharacterBase.h"
+#include "STAbilitySystemComponent.h"
+
 USTGameplayAbility::USTGameplayAbility() {}
 
-/* I DONT KNOW WHAT ANY OF THIS DOES
-FSTGameplayEffectContainerSpec USTGameplayAbility::MakeEffectContainerSpecFromContainer(const FSTGameplayEffectContainer& Container, const FGameplayEventData& EventData, int32 OverrideGameplayLevel)
+bool USTGameplayAbility::GetDamagingEffect()
 {
-	// First figure out our actor info
-	FSTGameplayEffectContainerSpec ReturnSpec;
+	FGameplayEffectContextHandle Handle;
 	AActor* OwningActor = GetOwningActorFromActorInfo();
-	ASTPartyCharacter* OwningCharacter = Cast<ASTPartyCharacter>(OwningActor);
-	//UAbilitySystemComponent* OwningASC = USTAbilitySystemComponent::GetAbilitySystemComponentFromActor(OwningActor);
-	
-	if (OwningASC)
+	ASTCharacterBase* OwningCharacter = Cast<ASTCharacterBase>(OwningActor);
+	if(OwningCharacter == nullptr)
 	{
-		// If we have a target type, run the targeting logic. This is optional, targets can be added later
-		if (Container.TargetType.Get())
-		{
-			TArray<FHitResult> HitResults;
-			TArray<AActor*> TargetActors;
-			const USTTargetType* TargetTypeCDO = Container.TargetType.GetDefaultObject();
-			AActor* AvatarActor = GetAvatarActorFromActorInfo();
-			TargetTypeCDO->GetTargets(OwningCharacter, AvatarActor, EventData, HitResults, TargetActors);
-			ReturnSpec.AddTargets(HitResults, TargetActors);
-		}
-
-		// If we don't have an override level, use the default on the ability itself
-		if (OverrideGameplayLevel == INDEX_NONE)
-		{
-			OverrideGameplayLevel = OverrideGameplayLevel = this->GetAbilityLevel(); //OwningASC->GetDefaultAbilityLevel();
-		}
-
-		// Build GameplayEffectSpecs for each applied effect
-		for (const TSubclassOf<UGameplayEffect>& EffectClass : Container.TargetGameplayEffectClasses)
-		{
-			ReturnSpec.TargetGameplayEffectSpecs.Add(MakeOutgoingGameplayEffectSpec(EffectClass, OverrideGameplayLevel));
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Owning Character is NULL"));
+		return false;
 	}
-	
-	return ReturnSpec;
-}
-
-FSTGameplayEffectContainerSpec USTGameplayAbility::MakeEffectContainerSpec(FGameplayTag ContainerTag, const FGameplayEventData& EventData, int32 OverrideGameplayLevel)
-{
-	FSTGameplayEffectContainer* FoundContainer = EffectContainerMap.Find(ContainerTag);
-
-	if (FoundContainer)
+	UAbilitySystemComponent* OwningASC = OwningCharacter->AbilitySystemComponent;
+	if(OwningASC == nullptr)
 	{
-		return MakeEffectContainerSpecFromContainer(*FoundContainer, EventData, OverrideGameplayLevel);
+		UE_LOG(LogTemp, Warning, TEXT("Owning ASC is NULL"));
+		return false;
 	}
-	return FSTGameplayEffectContainerSpec();
-}
-
-TArray<FActiveGameplayEffectHandle> USTGameplayAbility::ApplyEffectContainerSpec(const FSTGameplayEffectContainerSpec& ContainerSpec)
-{
-	TArray<FActiveGameplayEffectHandle> AllEffects;
-
-	// Iterate list of effect specs and apply them to their target data
-	for (const FGameplayEffectSpecHandle& SpecHandle : ContainerSpec.TargetGameplayEffectSpecs)
+	FGameplayEffectSpecHandle SpecHandle = OwningASC->MakeOutgoingSpec(GameplayEffects[0], 1, Handle);	// requires damage effect in slot 0
+	if(SpecHandle.Data == nullptr)
 	{
-		AllEffects.Append(K2_ApplyGameplayEffectSpecToTarget(SpecHandle, ContainerSpec.TargetData));
+		UE_LOG(LogTemp, Warning, TEXT("SpecHandle.Data is NULL"));
+		return false;
 	}
-	return AllEffects;
+	FGameplayEffectModifiedAttribute* ModifiedAttribute = SpecHandle.Data->GetModifiedAttribute(OwningCharacter->AttributeSet->GetHealthAttribute());
+	if(ModifiedAttribute == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Modified Attribute is NULL"));
+		return false;
+	}
+	const float DamageAmount = ModifiedAttribute->TotalMagnitude;
+	UE_LOG(LogTemp, Warning, TEXT("Character has damaging ability dealing %f damage!"), DamageAmount);
+	return true;
 }
 
-TArray<FActiveGameplayEffectHandle> USTGameplayAbility::ApplyEffectContainer(FGameplayTag ContainerTag, const FGameplayEventData& EventData, int32 OverrideGameplayLevel)
-{
-	FSTGameplayEffectContainerSpec Spec = MakeEffectContainerSpec(ContainerTag, EventData, OverrideGameplayLevel);
-	return ApplyEffectContainerSpec(Spec);
-}
-*/

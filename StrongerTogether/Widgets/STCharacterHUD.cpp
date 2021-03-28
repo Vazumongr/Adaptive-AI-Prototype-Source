@@ -23,8 +23,10 @@ bool USTCharacterHUD::Initialize()
     return true;
 }
 
-void USTCharacterHUD::ClearHUD() const
+void USTCharacterHUD::ClearHUD()
 {
+    SelectedCharacter = nullptr;
+    return;
     CharacterNameTextBlock->SetText(FText::FromString(""));
     AbilityOneTextBlock->SetText(FText::FromString(""));
     AbilityTwoTextBlock->SetText(FText::FromString(""));
@@ -53,6 +55,15 @@ void USTCharacterHUD::UpdateOwnerAbilityIndexToTwo() const
     UpdateController(2);
 }
 
+void USTCharacterHUD::UpdateHealth()
+{
+    if(SelectedCharacter != nullptr)
+    {
+        float HealthVal = SelectedCharacter->GetHealth();
+        HealthTextBlock->SetText(FText::FromString(FString::SanitizeFloat(HealthVal)));
+    }
+}
+
 void USTCharacterHUD::UpdateController(int32 AbilityIndex) const
 {
     if(OwningController == nullptr) return;
@@ -62,6 +73,10 @@ void USTCharacterHUD::UpdateController(int32 AbilityIndex) const
 void USTCharacterHUD::Update(ASTPartyCharacter* InActor)
 {
     if(InActor == nullptr) return;
+    SelectedCharacter = InActor;
+    SelectedCharacter->HealthChangedDelegate.BindUObject(this, &USTCharacterHUD::UpdateHealth);
+    UpdateHealth();
+    return;
     CharacterNameTextBlock->SetText(FText::FromName(InActor->Name));
     AbilityOneTextBlock->SetText(FText::FromString(InActor->AbilityOne));
     AbilityTwoTextBlock->SetText(FText::FromString(InActor->AbilityTwo));

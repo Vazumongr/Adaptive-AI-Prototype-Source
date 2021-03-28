@@ -17,7 +17,7 @@ class STRONGERTOGETHER_API USTCharacterHUD : public UUserWidget
 public: 
 	virtual bool Initialize() override;
 
-	void ClearHUD() const;
+	void ClearHUD();
 
 	void SetCharacterTurnText(const FName& CharName);
 
@@ -37,27 +37,32 @@ protected:
 	void UpdateOwnerAbilityIndexToOne() const;
 	UFUNCTION()
 	void UpdateOwnerAbilityIndexToTwo() const;
+	UFUNCTION()
+	void UpdateHealth();
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* CharacterNameTextBlock;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* AbilityOneTextBlock;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* AbilityTwoTextBlock;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* AbilityThreeTextBlock;;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* AbilityThreeTextBlock;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* HealthTextBlock;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* ManaTextBlock;;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* CharacterTurnTextBlock;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UBorder* AbilityOneBorder;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UBorder* AbilityTwoBorder;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UBorder* AbilityThreeBorder;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class ASTPartyCharacter* SelectedCharacter;
 	
 };

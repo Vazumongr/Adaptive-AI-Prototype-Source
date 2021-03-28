@@ -62,10 +62,18 @@ ASTCharacterBase* ASTEnemyController::FindLowestHealthPercentageTarget()
 	return PlayersCharacters[LowestHealthIndex];
 }
 
+ASTCharacterBase* ASTEnemyController::FindKillableTarget()
+{
+	SelectedCharacter->GetDamageAbility();
+	const int32 LowestHealthIndex {0};
+	return PlayersCharacters[LowestHealthIndex];
+}
+
 void ASTEnemyController::BeginTurn(const TArray<class ASTCharacterBase*> InPlayersCharacters)
 {
 	PlayersCharacters = InPlayersCharacters;
 
+	FindKillableTarget();
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ASTEnemyController::PickTarget, 1.0f, false);
 	GEngine->AddOnScreenDebugMessage(-1,1.f,FColor::Red, FString("Picking Target..."));
 }

@@ -22,6 +22,7 @@ protected:
 	
 	class ASTCharacterBase* FindLowestHealthValueTarget();
 	class ASTCharacterBase* FindLowestHealthPercentageTarget();
+	class ASTCharacterBase* FindKillableTarget();
 
 	UPROPERTY()
 	TArray<class ASTCharacterBase*> PlayersCharacters;
