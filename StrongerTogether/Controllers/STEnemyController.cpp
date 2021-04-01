@@ -98,7 +98,7 @@ ASTCharacterBase* ASTEnemyController::FindKillableTarget()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TurnManager is nullptr"));
 	}
-
+	
 	TArray<ASTCharacterBase*> TurnOrder;
 	int32 Idx;
 	TurnManager->GetTurnOrder(TurnOrder, Idx);
